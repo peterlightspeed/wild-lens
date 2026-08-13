@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Studio — Image to Video — WildLens</title>
+<meta name="description" content="Bring your wildlife photos to life. Animate a still into a short cinematic clip with camera motion and pacing control.">
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WildLens">
+
+<!-- Social preview -->
+<meta property="og:title" content="WildLens — AI Wildlife Identifier">
+<meta property="og:description" content="Snap a photo, identify any species in seconds. AI-powered wildlife identification, a living encyclopedia, and a global community of naturalists.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .motion-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .motion-opt { aspect-ratio:1/1; border-radius:var(--r-sm); background:var(--surface); border:1px solid var(--line-strong); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; cursor:pointer; transition:all .18s var(--ease); font-size:0.66rem; color:var(--ink-faint); text-align:center; padding:4px; }
+  .motion-opt i { font-size:1.05rem; }
+  .motion-opt:hover { border-color:var(--accent); }
+  .motion-opt.active { border-color:var(--accent-bright); background:rgba(87,179,127,0.1); color:var(--accent-bright); }
+  .video-frame { position:relative; width:100%; height:100%; overflow:hidden; border-radius:var(--r-lg); }
+  .video-frame .species-art { transition: transform 6s linear; }
+  .video-frame.playing.motion-zoomin .species-art { transform: scale(1.18); }
+  .video-frame.playing.motion-zoomout .species-art { transform: scale(0.86); }
+  .video-frame.playing.motion-panleft .species-art { transform: translateX(-6%) scale(1.06); }
+  .video-frame.playing.motion-panright .species-art { transform: translateX(6%) scale(1.06); }
+  .video-frame.playing.motion-orbit .species-art { transform: scale(1.1) rotate(-2deg); }
+  .video-controls { position:absolute; left:0; right:0; bottom:0; padding:14px; background:linear-gradient(0deg, rgba(6,10,7,0.85), transparent); display:flex; align-items:center; gap:12px; z-index:4; }
+  .video-play-btn { width:56px; height:56px; border-radius:50%; background:rgba(143,217,174,0.95); color:#06150d; display:flex; align-items:center; justify-content:center; font-size:1.3rem; cursor:pointer; box-shadow:0 10px 26px rgba(0,0,0,0.4); flex-shrink:0; }
+  .video-scrub { flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,0.2); position:relative; overflow:hidden; }
+  .video-scrub .fill { height:100%; background:var(--accent-bright); width:0%; }
+  .video-time { font-family:var(--font-mono); font-size:0.7rem; color:var(--ink-soft); flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="wl-nav" id="wlNav">
+  <div class="container-wl">
+    <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+    <ul class="wl-links">
+      <li><a href="index.html" data-nav-link>Home</a></li>
+      <li><a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a></li>
+      <li><a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a></li>
+      <li><a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-stars"></i> Studio</a>
+        <ul class="dropdown-menu wl-dropdown-menu">
+          <li><a class="dropdown-item" href="image-generator.html"><i class="bi bi-image"></i> Image Generator</a></li>
+          <li><a class="dropdown-item" href="image-to-video.html"><i class="bi bi-film"></i> Image to Video</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div class="wl-nav-actions">
+      <button class="btn-wl btn-outline-wl btn-sm-wl d-none d-md-inline-flex" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl btn-sm-wl d-none d-md-inline-flex"><i class="bi bi-camera"></i> Identify Now</a>
+      <button class="wl-burger" data-drawer-open aria-label="Open menu" aria-expanded="false"><span class="bi bi-list"></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="wl-drawer">
+  <div class="wl-drawer-backdrop"></div>
+  <div class="wl-drawer-panel">
+    <div class="wl-drawer-head">
+      <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+      <button class="wl-burger" data-drawer-close aria-label="Close menu"><span class="bi bi-x-lg"></span></button>
+    </div>
+    <nav>
+      <a href="index.html" data-nav-link><i class="bi bi-house"></i> Home</a>
+      <a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a>
+      <a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a>
+      <a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a>
+      <div class="wl-drawer-label">Studio</div>
+      <a href="image-generator.html" data-nav-link><i class="bi bi-image"></i> Image Generator</a>
+      <a href="image-to-video.html" data-nav-link class="active"><i class="bi bi-film"></i> Image-to-Video</a>
+    </nav>
+    <div class="mt-auto pt-4 d-flex flex-column gap-2">
+      <button class="btn-wl btn-outline-wl w-100" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install App</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl w-100"><i class="bi bi-camera"></i> Identify Wildlife</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE HERO ============ -->
+<header class="page-hero">
+  <div class="container-wl">
+    <span class="kicker" data-aos="fade-up"><i class="bi bi-film"></i> AI Studio</span>
+    <h1 class="mt-3" data-aos="fade-up" data-aos-delay="60">Bring your photos to life</h1>
+    <p class="lede mt-2" style="max-width:560px;" data-aos="fade-up" data-aos-delay="120">Turn a still wildlife photo into a short cinematic clip — choose the camera motion, pacing, and let the AI do the rest.</p>
+  </div>
+</header>
+
+<section class="pb-5">
+  <div class="container-wl">
+    <div class="studio-shell">
+
+      <!-- ============ LEFT PANEL ============ -->
+      <div>
+        <div class="studio-panel">
+          <div class="studio-panel-title">Source Image</div>
+          <div class="dropzone" id="videoDropzone" style="padding:34px 18px;">
+            <div class="dropzone-icon" style="width:58px;height:58px;font-size:1.4rem;"><i class="bi bi-cloud-arrow-up"></i></div>
+            <p class="mb-0" style="font-size:0.86rem;">Click or drop a photo to animate</p>
+          </div>
+
+          <div class="field-group mt-4">
+            <label class="field-label">Camera Motion</label>
+            <div class="motion-grid">
+              <div class="motion-opt active" data-motion="zoomin"><i class="bi bi-zoom-in"></i>Zoom In</div>
+              <div class="motion-opt" data-motion="zoomout"><i class="bi bi-zoom-out"></i>Zoom Out</div>
+              <div class="motion-opt" data-motion="panleft"><i class="bi bi-arrow-left"></i>Pan Left</div>
+              <div class="motion-opt" data-motion="panright"><i class="bi bi-arrow-right"></i>Pan Right</div>
+              <div class="motion-opt" data-motion="orbit"><i class="bi bi-arrow-repeat"></i>Orbit</div>
+              <div class="motion-opt" data-motion="static"><i class="bi bi-square"></i>Static</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Motion Strength <span class="spec-tag" id="motionVal">60%</span></label>
+            <input type="range" class="range-wl" min="0" max="100" step="10" value="60" id="motionRange">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="durationSelect">Duration</label>
+            <select class="wl-select" id="durationSelect">
+              <option>3 seconds</option>
+              <option selected>5 seconds</option>
+              <option>10 seconds</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="videoModelSelect">Model</label>
+            <select class="wl-select" id="videoModelSelect">
+              <option>WildLens Motion v1</option>
+              <option>WildLens Motion v1 HD</option>
+            </select>
+          </div>
+
+          <button class="btn-wl btn-primary-wl w-100 mt-3" id="btnGenerateVideo"><i class="bi bi-film"></i> Generate Video</button>
+        </div>
+      </div>
+
+      <!-- ============ CENTER CANVAS ============ -->
+      <div>
+        <div class="canvas-area" id="canvasArea" style="aspect-ratio:16/9; min-height:unset;">
+          <div id="canvasEmpty" class="text-center px-4">
+            <div class="dropzone-icon mx-auto" style="width:64px;height:64px;font-size:1.5rem;"><i class="bi bi-film"></i></div>
+            <p class="mt-3 mb-0">Your video preview will appear here</p>
+          </div>
+          <div id="canvasLoading" class="text-center px-4" hidden>
+            <div class="spinner-border" style="color:var(--accent-bright); width:2.5rem; height:2.5rem;" role="status"></div>
+            <p class="mt-3 mb-1" style="font-family:var(--font-mono); color:var(--accent-bright); font-size:0.8rem; letter-spacing:0.05em;" id="canvasLoadingText">RENDERING FRAMES…</p>
+            <div class="progress-wl mt-2" style="width:220px;"><div class="bar" id="videoProgressBar"></div></div>
+          </div>
+          <div id="canvasResult" style="display:none; width:100%; height:100%;"></div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 justify-content-center mt-3" id="canvasActions" style="display:none !important;">
+          <button class="btn-wl btn-outline-wl btn-sm-wl" id="btnRegenerate"><i class="bi bi-arrow-repeat"></i> Regenerate</button>
+          <button class="btn-wl btn-outline-wl btn-sm-wl" id="btnCanvasDownload"><i class="bi bi-download"></i> Download MP4</button>
+          <a href="community.html" class="btn-wl btn-outline-wl btn-sm-wl"><i class="bi bi-share"></i> Share to Community</a>
+        </div>
+      </div>
+
+      <!-- ============ RIGHT PANEL ============ -->
+      <div class="d-flex flex-column gap-3">
+        <div class="studio-panel">
+          <div class="studio-panel-title">Credits Usage</div>
+          <div class="credit-meter">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <span class="text-ink fw-bold" style="font-size:1.3rem;">128</span>
+              <span class="spec-tag">/ 200 video credits</span>
+            </div>
+            <div class="credit-bar"><div class="fill" style="width:64%;"></div></div>
+            <span class="spec-tag">Resets in 12 days</span>
+          </div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="studio-panel-title">Recent Creations <button class="btn-wl btn-ghost-wl btn-sm-wl" style="padding:4px 10px;" id="btnClearHistory"><i class="bi bi-trash3"></i></button></div>
+          <div class="d-flex flex-column gap-1" id="recentCreations"><p class="spec-tag">Nothing generated yet.</p></div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="studio-panel-title">Tips</div>
+          <ul class="ps-3 mb-0" style="font-size:0.82rem; color:var(--ink-muted);">
+            <li class="mb-2">High-resolution stills animate more smoothly.</li>
+            <li class="mb-2">Subtle motion (30–50%) looks most natural for portraits.</li>
+            <li>Orbit works best with a clear, centred subject.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="wl-footer">
+  <div class="container-wl">
+    <div class="row gy-5">
+      <div class="col-12 col-lg-4">
+        <a href="index.html" class="wl-brand mb-3 d-inline-flex"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+        <p class="mt-3">A field guide for the wild world — instant AI identification, a living encyclopedia, and a community tracking Earth's most extraordinary creatures.</p>
+        <div class="social-row">
+          <a href="#" class="btn-icon-wl" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="GitHub"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Navigate</h6>
+        <ul><li><a href="index.html">Home</a></li><li><a href="identify.html">Identify</a></li><li><a href="encyclopedia.html">Encyclopedia</a></li><li><a href="community.html">Community</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>AI Studio</h6>
+        <ul><li><a href="image-generator.html">Image Generator</a></li><li><a href="image-to-video.html">Image to Video</a></li><li><a href="image-generator.html#upscaler">Upscaler</a></li><li><a href="image-generator.html#bg-remover">Background Remover</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Resources</h6>
+        <ul><li><a href="#">Help Center</a></li><li><a href="#">API Docs</a></li><li><a href="#">Conservation Partners</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Stay Updated</h6>
+        <p class="mb-2" style="font-size:0.86rem;">Species spotlights, monthly.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); WL.toast('Subscribed — welcome to the pack.');">
+          <input type="email" required placeholder="you@email.com" aria-label="Email address">
+          <button type="submit" class="btn-icon-wl" style="width:44px;height:44px;flex-shrink:0;" aria-label="Subscribe"><i class="bi bi-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+      <div class="footer-copy">© 2026 WildLens. Helping people connect with nature.</div>
+    </div>
+    <div class="dev-credit">Crafted with <i class="bi bi-heart-fill" style="color:#57b37f;"></i> by <a href="https://peterlight123.github.io/portfolio" target="_blank" rel="noopener noreferrer">Peter Lightspeed</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var ART = ['<path d="M150 190 C190 180 200 130 175 100 C190 96 200 76 194 58 C176 66 168 82 166 92 C150 78 128 78 112 90 C96 78 74 66 56 58 C50 76 60 96 75 100 C50 130 60 180 100 190 C112 168 138 168 150 190Z" fill="#8fd9ae"/><polygon points="60,60 78,96 46,92" fill="#8fd9ae"/><polygon points="190,60 172,96 204,92" fill="#8fd9ae"/>',
+    '<ellipse cx="120" cy="168" rx="62" ry="34" fill="#8fd9ae"/><circle cx="146" cy="112" r="26" fill="#8fd9ae"/><path d="M160 92 C168 66 190 50 204 52 C194 62 188 78 186 92 C192 80 208 68 224 70 C212 82 202 96 198 112" fill="none" stroke="#57b37f" stroke-width="7" stroke-linecap="round"/>',
+    '<path d="M30 130 C55 78 150 62 196 96 C210 118 196 152 148 166 C96 178 50 168 30 130Z" fill="#8fd9ae"/><polygon points="10,105 34,116 34,144 10,155 22,130" fill="#8fd9ae"/>'
+  ];
+  var TONES = ['tone-a', 'tone-b', 'tone-c', 'tone-d'];
+
+  var selectedMotion = 'zoomin';
+  document.querySelectorAll('.motion-opt').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      document.querySelectorAll('.motion-opt').forEach(function (o) { o.classList.remove('active'); });
+      opt.classList.add('active');
+      selectedMotion = opt.getAttribute('data-motion');
+    });
+  });
+  document.getElementById('motionRange').addEventListener('input', function (e) { document.getElementById('motionVal').textContent = e.target.value + '%'; });
+
+  document.getElementById('videoDropzone').addEventListener('click', function () { WL.toast('Photo loaded'); });
+
+  function loadHistory(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
+  function saveHistory(key, list) { try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {} }
+  function renderRecentCreations() {
+    var list = loadHistory('wl_video_creations');
+    var wrap = document.getElementById('recentCreations');
+    if (!list.length) { wrap.innerHTML = '<p class="spec-tag">Nothing generated yet.</p>'; return; }
+    wrap.innerHTML = list.slice(0, 6).map(function (item) {
+      return '<div class="history-item"><div class="history-thumb species-art ' + item.tone + '" style="display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 240 240" style="width:70%;height:70%;">' + item.art + '</svg></div><div><div class="t">' + item.label + '</div><div class="s">' + item.time + '</div></div></div>';
+    }).join('');
+  }
+  renderRecentCreations();
+  document.getElementById('btnClearHistory').addEventListener('click', function () {
+    localStorage.removeItem('wl_video_creations');
+    renderRecentCreations();
+  });
+
+  function runGenerate() {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasResult').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasActions').style.setProperty('display', 'none', 'important');
+    var bar = document.getElementById('videoProgressBar');
+    bar.style.width = '0%';
+    var p = 0;
+    var texts = ['RENDERING FRAMES…', 'APPLYING CAMERA MOTION…', 'COMPOSITING…', 'ENCODING MP4…'];
+    var timer = setInterval(function () {
+      p += Math.random() * 10 + 6;
+      if (p >= 100) { p = 100; clearInterval(timer); setTimeout(reveal, 300); }
+      bar.style.width = p + '%';
+      document.getElementById('canvasLoadingText').textContent = texts[Math.min(texts.length - 1, Math.floor(p / 26))];
+    }, 260);
+  }
+
+  function reveal() {
+    document.getElementById('canvasLoading').hidden = true;
+    var art = ART[Math.floor(Math.random() * ART.length)];
+    var tone = TONES[Math.floor(Math.random() * TONES.length)];
+    var resultEl = document.getElementById('canvasResult');
+    resultEl.style.display = '';
+    resultEl.innerHTML =
+      '<div class="video-frame motion-' + selectedMotion + '" id="videoFrame">' +
+        '<div class="species-art ' + tone + '" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 240 240" style="width:48%;height:48%;filter:drop-shadow(0 18px 26px rgba(0,0,0,0.5));">' + art + '</svg></div>' +
+        '<div class="video-controls">' +
+          '<div class="video-play-btn" id="videoPlayBtn"><i class="bi bi-play-fill"></i></div>' +
+          '<div class="video-scrub"><div class="fill" id="videoScrubFill"></div></div>' +
+          '<span class="video-time" id="videoTime">0:00 / 0:05</span>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('canvasActions').style.setProperty('display', 'flex', 'important');
+
+    var frame = document.getElementById('videoFrame');
+    var playBtn = document.getElementById('videoPlayBtn');
+    var scrubFill = document.getElementById('videoScrubFill');
+    var timeEl = document.getElementById('videoTime');
+    var playing = false, raf, startTs;
+    var durationSec = parseInt(document.getElementById('durationSelect').value, 10) || 5;
+
+    function tick(ts) {
+      if (!startTs) startTs = ts;
+      var elapsed = (ts - startTs) / 1000;
+      var pct = Math.min(100, (elapsed / durationSec) * 100);
+      scrubFill.style.width = pct + '%';
+      timeEl.textContent = fmt(elapsed) + ' / 0:0' + durationSec;
+      if (pct < 100 && playing) raf = requestAnimationFrame(tick);
+      else if (pct >= 100) { playing = false; playBtn.innerHTML = '<i class="bi bi-play-fill"></i>'; frame.classList.remove('playing'); startTs = null; }
+    }
+    function fmt(s) { return '0:' + String(Math.floor(s)).padStart(2, '0'); }
+    playBtn.addEventListener('click', function () {
+      playing = !playing;
+      playBtn.innerHTML = playing ? '<i class="bi bi-pause-fill"></i>' : '<i class="bi bi-play-fill"></i>';
+      if (playing) { frame.classList.add('playing'); startTs = null; raf = requestAnimationFrame(tick); }
+      else { frame.classList.remove('playing'); }
+    });
+
+    var creations = loadHistory('wl_video_creations');
+    creations.unshift({ label: selectedMotion.charAt(0).toUpperCase() + selectedMotion.slice(1) + ' motion clip', time: 'Just now', art: art, tone: tone });
+    saveHistory('wl_video_creations', creations.slice(0, 12));
+    renderRecentCreations();
+  }
+
+  document.getElementById('btnGenerateVideo').addEventListener('click', runGenerate);
+  document.getElementById('btnRegenerate').addEventListener('click', runGenerate);
+  document.getElementById('btnCanvasDownload').addEventListener('click', function () { WL.toast('Preparing MP4 download…'); });
+})();
+</script>
+</body>
+</html>

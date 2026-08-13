@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Studio — Image Generator — WildLens</title>
+<meta name="description" content="Generate wildlife art, remove backgrounds, and upscale your best shots in the WildLens AI Studio.">
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WildLens">
+
+<!-- Social preview -->
+<meta property="og:title" content="WildLens — AI Wildlife Identifier">
+<meta property="og:description" content="Snap a photo, identify any species in seconds. AI-powered wildlife identification, a living encyclopedia, and a global community of naturalists.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .tool-switch { display:flex; gap:6px; background:var(--bg-elevated); border:1px solid var(--line-strong); border-radius:var(--r-pill); padding:5px; width:fit-content; }
+  .tool-switch button { padding:9px 18px; border-radius:var(--r-pill); font-weight:700; font-size:0.85rem; color:var(--ink-muted); border:none; background:transparent; transition: all .2s var(--ease); white-space:nowrap; }
+  .tool-switch button.active { background:var(--accent); color:#06150d; }
+  .range-wl { width:100%; accent-color: var(--accent-bright); }
+  .checker-bg { background-image: linear-gradient(45deg,#1a2620 25%,transparent 25%),linear-gradient(-45deg,#1a2620 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#1a2620 75%),linear-gradient(-45deg,transparent 75%,#1a2620 75%); background-size:20px 20px; background-position:0 0,0 10px,10px -10px,-10px 0px; }
+  .ba-wrap { position:relative; width:100%; max-width:420px; aspect-ratio:1/1; border-radius:var(--r-md); overflow:hidden; border:1px solid var(--line-strong); }
+  .ba-after { position:absolute; inset:0; overflow:hidden; }
+  .ba-slider { position:absolute; top:0; bottom:0; width:3px; background:var(--accent-bright); left:50%; box-shadow:0 0 12px rgba(143,217,174,0.7); pointer-events:none; }
+  .ba-slider::after { content:'\f337'; font-family:'bootstrap-icons'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:34px; height:34px; background:var(--accent-bright); color:#06150d; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+  .ba-range { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:ew-resize; margin:0; }
+  .studio-canvas-label { position:absolute; top:14px; left:14px; z-index:3; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="wl-nav" id="wlNav">
+  <div class="container-wl">
+    <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+    <ul class="wl-links">
+      <li><a href="index.html" data-nav-link>Home</a></li>
+      <li><a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a></li>
+      <li><a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a></li>
+      <li><a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle show" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-stars"></i> Studio</a>
+        <ul class="dropdown-menu wl-dropdown-menu">
+          <li><a class="dropdown-item" href="image-generator.html"><i class="bi bi-image"></i> Image Generator</a></li>
+          <li><a class="dropdown-item" href="image-to-video.html"><i class="bi bi-film"></i> Image to Video</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div class="wl-nav-actions">
+      <button class="btn-wl btn-outline-wl btn-sm-wl d-none d-md-inline-flex" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl btn-sm-wl d-none d-md-inline-flex"><i class="bi bi-camera"></i> Identify Now</a>
+      <button class="wl-burger" data-drawer-open aria-label="Open menu" aria-expanded="false"><span class="bi bi-list"></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="wl-drawer">
+  <div class="wl-drawer-backdrop"></div>
+  <div class="wl-drawer-panel">
+    <div class="wl-drawer-head">
+      <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+      <button class="wl-burger" data-drawer-close aria-label="Close menu"><span class="bi bi-x-lg"></span></button>
+    </div>
+    <nav>
+      <a href="index.html" data-nav-link><i class="bi bi-house"></i> Home</a>
+      <a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a>
+      <a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a>
+      <a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a>
+      <div class="wl-drawer-label">Studio</div>
+      <a href="image-generator.html" data-nav-link class="active"><i class="bi bi-image"></i> Image Generator</a>
+      <a href="image-to-video.html" data-nav-link><i class="bi bi-film"></i> Image-to-Video</a>
+    </nav>
+    <div class="mt-auto pt-4 d-flex flex-column gap-2">
+      <button class="btn-wl btn-outline-wl w-100" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install App</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl w-100"><i class="bi bi-camera"></i> Identify Wildlife</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE HERO ============ -->
+<header class="page-hero">
+  <div class="container-wl">
+    <span class="kicker" data-aos="fade-up"><i class="bi bi-stars"></i> AI Studio</span>
+    <h1 class="mt-3" data-aos="fade-up" data-aos-delay="60">Create wildlife art</h1>
+    <p class="lede mt-2" style="max-width:560px;" data-aos="fade-up" data-aos-delay="120">Generate original wildlife imagery, remove backgrounds, and upscale your best shots — all in one studio.</p>
+    <div class="tool-switch mt-4" id="toolSwitch" data-aos="fade-up" data-aos-delay="160">
+      <button class="active" data-tool="generate"><i class="bi bi-magic"></i> Generate</button>
+      <button data-tool="bg-remover" id="bg-remover"><i class="bi bi-scissors"></i> Background Remover</button>
+      <button data-tool="upscaler" id="upscaler"><i class="bi bi-arrows-angle-expand"></i> Upscaler</button>
+    </div>
+  </div>
+</header>
+
+<section class="pb-5">
+  <div class="container-wl">
+    <div class="studio-shell">
+
+      <!-- ============ LEFT PANEL ============ -->
+      <div>
+        <!-- Generate panel -->
+        <div class="studio-panel tool-panel" data-panel="generate">
+          <div class="studio-panel-title">Prompt <span class="badge-wl badge-neutral">Step 1</span></div>
+          <div class="field-group">
+            <textarea class="wl-textarea" id="promptInput" placeholder="A red fox in a snow-covered pine forest at golden hour, cinematic, detailed fur…"></textarea>
+            <div class="field-hint">Be specific about species, setting, lighting, and mood.</div>
+          </div>
+          <div class="chip-row mb-2">
+            <button class="suggest-chip" data-fill="A snow leopard resting on a rocky ledge, misty Himalayan backdrop">Snow leopard, misty peak</button>
+            <button class="suggest-chip" data-fill="A blue morpho butterfly on a rainforest leaf, macro, dew drops">Morpho macro shot</button>
+            <button class="suggest-chip" data-fill="A humpback whale breaching at sunset, dramatic ocean spray">Whale breach, sunset</button>
+          </div>
+
+          <div class="field-group mt-4">
+            <label class="field-label">Aspect Ratio</label>
+            <div class="aspect-grid">
+              <div class="aspect-opt active" data-ratio="1:1"><div class="shape" style="width:20px;height:20px;"></div>1:1</div>
+              <div class="aspect-opt" data-ratio="4:5"><div class="shape" style="width:17px;height:21px;"></div>4:5</div>
+              <div class="aspect-opt" data-ratio="16:9"><div class="shape" style="width:24px;height:14px;"></div>16:9</div>
+              <div class="aspect-opt" data-ratio="9:16"><div class="shape" style="width:13px;height:23px;"></div>9:16</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="modelSelect">Model</label>
+            <select class="wl-select" id="modelSelect">
+              <option>WildLens Diffusion v3</option>
+              <option>WildLens Diffusion v2 Turbo</option>
+              <option>WildLens Photoreal</option>
+            </select>
+          </div>
+
+          <button class="btn-wl btn-ghost-wl btn-sm-wl w-100 justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#advancedOpts" style="padding-left:0;">
+            Advanced Options <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="collapse" id="advancedOpts">
+            <div class="field-group mt-3">
+              <label class="field-label" for="negPrompt">Negative Prompt</label>
+              <textarea class="wl-textarea" id="negPrompt" style="min-height:70px;" placeholder="blurry, low detail, extra limbs, watermark"></textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Guidance Scale <span class="spec-tag" id="guidanceVal">7.5</span></label>
+              <input type="range" class="range-wl" min="1" max="15" step="0.5" value="7.5" id="guidanceRange">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Steps <span class="spec-tag" id="stepsVal">30</span></label>
+              <input type="range" class="range-wl" min="10" max="60" step="1" value="30" id="stepsRange">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="seedInput">Seed</label>
+              <div class="d-flex gap-2">
+                <input class="wl-input" id="seedInput" value="482910" style="flex:1;">
+                <button class="btn-icon-wl" id="btnRandomSeed" aria-label="Randomize seed"><i class="bi bi-shuffle"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-wl btn-primary-wl w-100 mt-4" id="btnGenerate"><i class="bi bi-stars"></i> Generate Image</button>
+        </div>
+
+        <!-- Background remover panel -->
+        <div class="studio-panel tool-panel" data-panel="bg-remover" hidden>
+          <div class="studio-panel-title">Upload Image</div>
+          <div class="dropzone" style="padding:34px 18px;" id="bgDropzone">
+            <div class="dropzone-icon" style="width:58px;height:58px;font-size:1.4rem;"><i class="bi bi-cloud-arrow-up"></i></div>
+            <p class="mb-0" style="font-size:0.86rem;">Click or drop an image to remove its background</p>
+          </div>
+          <div class="field-group mt-4">
+            <label class="field-label" for="outputFormat">Output Format</label>
+            <select class="wl-select" id="outputFormat"><option>PNG (transparent)</option><option>WebP (transparent)</option></select>
+          </div>
+          <div class="d-flex align-items-center justify-content-between field-group">
+            <label class="field-label mb-0" for="edgeRefine">Edge Refinement</label>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="edgeRefine" checked></div>
+          </div>
+          <button class="btn-wl btn-primary-wl w-100 mt-3" id="btnRemoveBg"><i class="bi bi-scissors"></i> Remove Background</button>
+        </div>
+
+        <!-- Upscaler panel -->
+        <div class="studio-panel tool-panel" data-panel="upscaler" hidden>
+          <div class="studio-panel-title">Upload Image</div>
+          <div class="dropzone" style="padding:34px 18px;" id="upDropzone">
+            <div class="dropzone-icon" style="width:58px;height:58px;font-size:1.4rem;"><i class="bi bi-cloud-arrow-up"></i></div>
+            <p class="mb-0" style="font-size:0.86rem;">Click or drop an image to enhance its resolution</p>
+          </div>
+          <div class="field-group mt-4">
+            <label class="field-label" for="scaleFactor">Scale Factor</label>
+            <select class="wl-select" id="scaleFactor"><option>2×</option><option selected>4×</option><option>8×</option></select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Denoise Strength <span class="spec-tag" id="denoiseVal">40%</span></label>
+            <input type="range" class="range-wl" min="0" max="100" step="5" value="40" id="denoiseRange">
+          </div>
+          <div class="d-flex align-items-center justify-content-between field-group">
+            <label class="field-label mb-0" for="enhanceFaces">Enhance Faces</label>
+            <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="enhanceFaces"></div>
+          </div>
+          <button class="btn-wl btn-primary-wl w-100 mt-3" id="btnUpscale"><i class="bi bi-arrows-angle-expand"></i> Upscale Image</button>
+        </div>
+      </div>
+
+      <!-- ============ CENTER CANVAS ============ -->
+      <div>
+        <div class="canvas-area" id="canvasArea">
+          <div id="canvasEmpty" class="text-center px-4">
+            <div class="dropzone-icon mx-auto" style="width:64px;height:64px;font-size:1.5rem;"><i class="bi bi-image"></i></div>
+            <p class="mt-3 mb-0">Your creation will appear here</p>
+          </div>
+          <div id="canvasLoading" class="text-center px-4" hidden>
+            <div class="spinner-border" style="color:var(--accent-bright); width:2.5rem; height:2.5rem;" role="status"></div>
+            <p class="mt-3 mb-1 stage-status" style="font-family:var(--font-mono); color:var(--accent-bright); font-size:0.8rem; letter-spacing:0.05em;" id="canvasLoadingText">RENDERING…</p>
+          </div>
+          <div id="canvasResult" style="display:none; width:100%; height:100%; position:relative;"></div>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 justify-content-center mt-3" id="canvasActions" style="display:none !important;">
+          <button class="btn-wl btn-outline-wl btn-sm-wl" id="btnRegenerate"><i class="bi bi-arrow-repeat"></i> Regenerate</button>
+          <button class="btn-wl btn-outline-wl btn-sm-wl" id="btnCanvasDownload"><i class="bi bi-download"></i> Download</button>
+          <a href="image-to-video.html" class="btn-wl btn-outline-wl btn-sm-wl"><i class="bi bi-film"></i> Animate This</a>
+        </div>
+      </div>
+
+      <!-- ============ RIGHT PANEL ============ -->
+      <div class="d-flex flex-column gap-3">
+        <div class="studio-panel">
+          <div class="studio-panel-title">Credits Usage</div>
+          <div class="credit-meter">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <span class="text-ink fw-bold" style="font-size:1.3rem;">342</span>
+              <span class="spec-tag">/ 500 credits</span>
+            </div>
+            <div class="credit-bar"><div class="fill" style="width:68.4%;"></div></div>
+            <span class="spec-tag">Resets in 12 days</span>
+          </div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="studio-panel-title">Recent Creations <button class="btn-wl btn-ghost-wl btn-sm-wl" style="padding:4px 10px;" id="btnClearHistory"><i class="bi bi-trash3"></i></button></div>
+          <div class="d-flex flex-column gap-1" id="recentCreations"><p class="spec-tag">Nothing generated yet.</p></div>
+        </div>
+
+        <div class="studio-panel">
+          <div class="studio-panel-title">Prompt History</div>
+          <div class="d-flex flex-column gap-2" id="promptHistory"><p class="spec-tag">Your prompts will appear here.</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="wl-footer">
+  <div class="container-wl">
+    <div class="row gy-5">
+      <div class="col-12 col-lg-4">
+        <a href="index.html" class="wl-brand mb-3 d-inline-flex"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+        <p class="mt-3">A field guide for the wild world — instant AI identification, a living encyclopedia, and a community tracking Earth's most extraordinary creatures.</p>
+        <div class="social-row">
+          <a href="#" class="btn-icon-wl" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="GitHub"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Navigate</h6>
+        <ul><li><a href="index.html">Home</a></li><li><a href="identify.html">Identify</a></li><li><a href="encyclopedia.html">Encyclopedia</a></li><li><a href="community.html">Community</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>AI Studio</h6>
+        <ul><li><a href="image-generator.html">Image Generator</a></li><li><a href="image-to-video.html">Image to Video</a></li><li><a href="image-generator.html#upscaler">Upscaler</a></li><li><a href="image-generator.html#bg-remover">Background Remover</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Resources</h6>
+        <ul><li><a href="#">Help Center</a></li><li><a href="#">API Docs</a></li><li><a href="#">Conservation Partners</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Stay Updated</h6>
+        <p class="mb-2" style="font-size:0.86rem;">Species spotlights, monthly.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); WL.toast('Subscribed — welcome to the pack.');">
+          <input type="email" required placeholder="you@email.com" aria-label="Email address">
+          <button type="submit" class="btn-icon-wl" style="width:44px;height:44px;flex-shrink:0;" aria-label="Subscribe"><i class="bi bi-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+      <div class="footer-copy">© 2026 WildLens. Helping people connect with nature.</div>
+    </div>
+    <div class="dev-credit">Crafted with <i class="bi bi-heart-fill" style="color:#57b37f;"></i> by <a href="https://peterlight123.github.io/portfolio" target="_blank" rel="noopener noreferrer">Peter Lightspeed</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var ART = ['<path d="M150 190 C190 180 200 130 175 100 C190 96 200 76 194 58 C176 66 168 82 166 92 C150 78 128 78 112 90 C96 78 74 66 56 58 C50 76 60 96 75 100 C50 130 60 180 100 190 C112 168 138 168 150 190Z" fill="#8fd9ae"/><polygon points="60,60 78,96 46,92" fill="#8fd9ae"/><polygon points="190,60 172,96 204,92" fill="#8fd9ae"/><circle cx="102" cy="118" r="4" fill="#0e2419"/><circle cx="138" cy="118" r="4" fill="#0e2419"/>',
+    '<g fill="#3a7a5a"><circle cx="172" cy="120" r="32"/><circle cx="156.8" cy="156.8" r="32"/><circle cx="120" cy="172" r="32"/><circle cx="83.2" cy="156.8" r="32"/><circle cx="68" cy="120" r="32"/><circle cx="83.2" cy="83.2" r="32"/><circle cx="120" cy="68" r="32"/><circle cx="156.8" cy="83.2" r="32"/></g><circle cx="120" cy="120" r="44" fill="#8fd9ae"/>',
+    '<path d="M30 130 C55 78 150 62 196 96 C210 118 196 152 148 166 C96 178 50 168 30 130Z" fill="#8fd9ae"/><polygon points="10,105 34,116 34,144 10,155 22,130" fill="#8fd9ae"/>',
+    '<g fill="#8fd9ae"><path d="M118 120 C70 60 30 70 26 110 C22 150 70 158 118 128Z"/><path d="M122 120 C170 60 210 70 214 110 C218 150 170 158 122 128Z"/></g><rect x="116" y="108" width="8" height="96" rx="4" fill="#0e2419"/>'
+  ];
+  var TONES = ['tone-a', 'tone-b', 'tone-c', 'tone-d'];
+  function randomArtHTML(extraStyle) {
+    var art = ART[Math.floor(Math.random() * ART.length)];
+    var tone = TONES[Math.floor(Math.random() * TONES.length)];
+    return '<div class="species-art ' + tone + '" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;' + (extraStyle || '') + '"><svg viewBox="0 0 240 240" style="width:54%;height:54%;filter:drop-shadow(0 18px 26px rgba(0,0,0,0.5));">' + art + '</svg></div>';
+  }
+
+  /* ---- Tool switching ---- */
+  var toolButtons = document.querySelectorAll('#toolSwitch button');
+  toolButtons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      toolButtons.forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      var tool = b.getAttribute('data-tool');
+      document.querySelectorAll('.tool-panel').forEach(function (p) { p.hidden = p.getAttribute('data-panel') !== tool; });
+      resetCanvas();
+    });
+  });
+  // anchor deep-links from footer (#bg-remover / #upscaler)
+  if (window.location.hash) {
+    var target = document.querySelector('#toolSwitch [data-tool="' + window.location.hash.replace('#', '') + '"]');
+    if (target) target.click();
+  }
+
+  function resetCanvas() {
+    document.getElementById('canvasEmpty').style.display = '';
+    document.getElementById('canvasLoading').hidden = true;
+    document.getElementById('canvasResult').style.display = 'none';
+    document.getElementById('canvasActions').style.setProperty('display', 'none', 'important');
+  }
+
+  /* ---- Aspect ratio selection ---- */
+  document.querySelectorAll('.aspect-opt').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      document.querySelectorAll('.aspect-opt').forEach(function (o) { o.classList.remove('active'); });
+      opt.classList.add('active');
+    });
+  });
+
+  /* ---- Range displays ---- */
+  document.getElementById('guidanceRange').addEventListener('input', function (e) { document.getElementById('guidanceVal').textContent = e.target.value; });
+  document.getElementById('stepsRange').addEventListener('input', function (e) { document.getElementById('stepsVal').textContent = e.target.value; });
+  document.getElementById('denoiseRange').addEventListener('input', function (e) { document.getElementById('denoiseVal').textContent = e.target.value + '%'; });
+  document.getElementById('btnRandomSeed').addEventListener('click', function () {
+    document.getElementById('seedInput').value = Math.floor(Math.random() * 900000 + 100000);
+  });
+
+  /* ---- Prompt suggestions ---- */
+  document.querySelectorAll('.suggest-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () { document.getElementById('promptInput').value = chip.getAttribute('data-fill'); });
+  });
+
+  /* ---- History (localStorage) ---- */
+  function loadHistory(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; } }
+  function saveHistory(key, list) { try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {} }
+
+  function renderRecentCreations() {
+    var list = loadHistory('wl_studio_creations');
+    var wrap = document.getElementById('recentCreations');
+    if (!list.length) { wrap.innerHTML = '<p class="spec-tag">Nothing generated yet.</p>'; return; }
+    wrap.innerHTML = list.slice(0, 6).map(function (item) {
+      return '<div class="history-item"><div class="history-thumb species-art ' + item.tone + '" style="display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 240 240" style="width:70%;height:70%;">' + item.art + '</svg></div><div><div class="t">' + item.label + '</div><div class="s">' + item.time + '</div></div></div>';
+    }).join('');
+  }
+  function renderPromptHistory() {
+    var list = loadHistory('wl_prompt_history');
+    var wrap = document.getElementById('promptHistory');
+    if (!list.length) { wrap.innerHTML = '<p class="spec-tag">Your prompts will appear here.</p>'; return; }
+    wrap.innerHTML = list.slice(0, 6).map(function (p) {
+      return '<button class="suggest-chip text-start" style="border-radius:var(--r-sm); width:100%;" onclick="document.getElementById(\'promptInput\').value=this.getAttribute(\'data-p\')" data-p="' + p.replace(/"/g, '&quot;') + '">' + p.slice(0, 54) + (p.length > 54 ? '…' : '') + '</button>';
+    }).join('');
+  }
+  renderRecentCreations();
+  renderPromptHistory();
+
+  document.getElementById('btnClearHistory').addEventListener('click', function () {
+    localStorage.removeItem('wl_studio_creations');
+    renderRecentCreations();
+  });
+
+  /* ---- Generate flow ---- */
+  var lastArtHTML = '';
+  function runGenerate(label) {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasResult').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasLoadingText').textContent = 'RENDERING…';
+    document.getElementById('canvasActions').style.setProperty('display', 'none', 'important');
+
+    setTimeout(function () {
+      var artHtml = randomArtHTML();
+      lastArtHTML = artHtml;
+      document.getElementById('canvasLoading').hidden = true;
+      var resultEl = document.getElementById('canvasResult');
+      resultEl.style.display = '';
+      resultEl.innerHTML = artHtml;
+      document.getElementById('canvasActions').style.setProperty('display', 'flex', 'important');
+
+      var creations = loadHistory('wl_studio_creations');
+      var artInner = artHtml.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
+      creations.unshift({ label: label, time: 'Just now', art: artInner ? artInner[1] : '', tone: (artHtml.match(/tone-[a-d]/) || ['tone-a'])[0] });
+      saveHistory('wl_studio_creations', creations.slice(0, 12));
+      renderRecentCreations();
+    }, 1800);
+  }
+
+  document.getElementById('btnGenerate').addEventListener('click', function () {
+    var prompt = document.getElementById('promptInput').value.trim() || 'Untitled wildlife scene';
+    var prompts = loadHistory('wl_prompt_history');
+    prompts.unshift(prompt);
+    saveHistory('wl_prompt_history', prompts.slice(0, 10));
+    renderPromptHistory();
+    runGenerate(prompt.slice(0, 40));
+  });
+  document.getElementById('btnRegenerate').addEventListener('click', function () {
+    runGenerate('Regenerated image');
+  });
+  document.getElementById('btnCanvasDownload').addEventListener('click', function () { WL.toast('Preparing download…'); });
+
+  /* ---- Background remover flow ---- */
+  document.getElementById('bgDropzone').addEventListener('click', function () {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasLoadingText').textContent = 'IMAGE LOADED — READY';
+    setTimeout(function () { document.getElementById('canvasLoading').hidden = true; document.getElementById('canvasEmpty').style.display = ''; }, 900);
+  });
+  document.getElementById('btnRemoveBg').addEventListener('click', function () {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasResult').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasLoadingText').textContent = 'REMOVING BACKGROUND…';
+    document.getElementById('canvasActions').style.setProperty('display', 'none', 'important');
+    setTimeout(function () {
+      document.getElementById('canvasLoading').hidden = true;
+      var art = ART[Math.floor(Math.random() * ART.length)];
+      var resultEl = document.getElementById('canvasResult');
+      resultEl.style.display = '';
+      resultEl.innerHTML = '<div class="checker-bg" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 240 240" style="width:54%;height:54%;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.4));">' + art + '</svg></div>';
+      document.getElementById('canvasActions').style.setProperty('display', 'flex', 'important');
+      WL.toast('Background removed');
+    }, 1600);
+  });
+
+  /* ---- Upscaler flow ---- */
+  document.getElementById('upDropzone').addEventListener('click', function () {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasLoadingText').textContent = 'IMAGE LOADED — READY';
+    setTimeout(function () { document.getElementById('canvasLoading').hidden = true; document.getElementById('canvasEmpty').style.display = ''; }, 900);
+  });
+  document.getElementById('btnUpscale').addEventListener('click', function () {
+    document.getElementById('canvasEmpty').style.display = 'none';
+    document.getElementById('canvasResult').style.display = 'none';
+    document.getElementById('canvasLoading').hidden = false;
+    document.getElementById('canvasLoadingText').textContent = 'UPSCALING ' + document.getElementById('scaleFactor').value + '…';
+    document.getElementById('canvasActions').style.setProperty('display', 'none', 'important');
+    setTimeout(function () {
+      document.getElementById('canvasLoading').hidden = true;
+      var art = ART[Math.floor(Math.random() * ART.length)];
+      var resultEl = document.getElementById('canvasResult');
+      resultEl.style.display = '';
+      resultEl.innerHTML =
+        '<div class="ba-wrap">' +
+          '<span class="badge-wl badge-neutral studio-canvas-label">Before</span>' +
+          '<div class="species-art tone-a" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;filter:blur(2px) saturate(0.7);"><svg viewBox="0 0 240 240" style="width:46%;height:46%;">' + art + '</svg></div>' +
+          '<div class="ba-after" id="baAfter" style="width:50%;">' +
+            '<span class="badge-wl badge-success" style="position:absolute;top:14px;right:14px;z-index:3;">After</span>' +
+            '<div class="species-art tone-a" style="width:200%;height:100%;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 240 240" style="width:27%;height:54%;">' + art + '</svg></div>' +
+          '</div>' +
+          '<div class="ba-slider" id="baSlider" style="left:50%;"></div>' +
+          '<input type="range" class="ba-range" min="0" max="100" value="50" id="baRange" aria-label="Before and after comparison slider">' +
+        '</div>';
+      document.getElementById('baRange').addEventListener('input', function (e) {
+        document.getElementById('baAfter').style.width = e.target.value + '%';
+        document.getElementById('baSlider').style.left = e.target.value + '%';
+      });
+      document.getElementById('canvasActions').style.setProperty('display', 'flex', 'important');
+      WL.toast('Upscale complete');
+    }, 1800);
+  });
+})();
+</script>
+</body>
+</html>
