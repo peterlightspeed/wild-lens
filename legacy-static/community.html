@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community Sightings — WildLens</title>
+<meta name="description" content="Recent wildlife sightings from the WildLens community around the world — share your own and connect with fellow naturalists.">
+<link rel="canonical" href="https://YOUR-USERNAME.github.io/wildlens/community.html">
+<meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://YOUR-USERNAME.github.io/wildlens/"},{"@type":"ListItem","position":2,"name":"Community Sightings","item":"https://YOUR-USERNAME.github.io/wildlens/community.html"}]}
+</script>
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WildLens">
+
+<!-- Social preview -->
+<meta property="og:title" content="WildLens — AI Wildlife Identifier">
+<meta property="og:description" content="Snap a photo, identify any species in seconds. AI-powered wildlife identification, a living encyclopedia, and a global community of naturalists.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  #sightingModal .modal-content { background: var(--bg-elevated); border: 1px solid var(--line-strong); border-radius: var(--r-xl); }
+  #sightingModal .modal-body { padding: 0; }
+  .avatar-ring { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(155deg, var(--accent-bright), var(--forest)); display:flex; align-items:center; justify-content:center; font-family: var(--font-display); font-weight:700; color:#06150d; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="wl-nav" id="wlNav">
+  <div class="container-wl">
+    <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+    <ul class="wl-links">
+      <li><a href="index.html" data-nav-link>Home</a></li>
+      <li><a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a></li>
+      <li><a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a></li>
+      <li><a href="community.html" data-nav-link class="active"><i class="bi bi-people"></i> Community</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-stars"></i> Studio</a>
+        <ul class="dropdown-menu wl-dropdown-menu">
+          <li><a class="dropdown-item" href="image-generator.html"><i class="bi bi-image"></i> Image Generator</a></li>
+          <li><a class="dropdown-item" href="image-to-video.html"><i class="bi bi-film"></i> Image to Video</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div class="wl-nav-actions">
+      <button class="btn-wl btn-outline-wl btn-sm-wl d-none d-md-inline-flex" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl btn-sm-wl d-none d-md-inline-flex"><i class="bi bi-camera"></i> Identify Now</a>
+      <a href="login.html" class="btn-wl btn-ghost-wl btn-sm-wl d-none d-md-inline-flex" data-auth-out><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+      <div class="dropdown d-none d-md-block" data-auth-in hidden>
+        <button class="btn-icon-wl" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu" style="font-family:var(--font-mono);font-weight:700;font-size:0.75rem;">
+          <span data-auth-initials>?</span>
+        </button>
+        <ul class="dropdown-menu wl-dropdown-menu dropdown-menu-end">
+          <li class="px-3 py-2"><div class="text-ink fw-bold" style="font-size:0.85rem;" data-auth-name>-</div></li>
+          <li><hr class="dropdown-divider" style="border-color:var(--line);"></li>
+          <li><button class="dropdown-item" data-signout type="button"><i class="bi bi-box-arrow-right"></i> Sign Out</button></li>
+        </ul>
+      </div>
+      <button class="wl-burger" data-drawer-open aria-label="Open menu" aria-expanded="false"><span class="bi bi-list"></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="wl-drawer">
+  <div class="wl-drawer-backdrop"></div>
+  <div class="wl-drawer-panel">
+    <div class="wl-drawer-head">
+      <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+      <button class="wl-burger" data-drawer-close aria-label="Close menu"><span class="bi bi-x-lg"></span></button>
+    </div>
+    <nav>
+      <a href="index.html" data-nav-link><i class="bi bi-house"></i> Home</a>
+      <a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a>
+      <a href="community.html" data-nav-link class="active"><i class="bi bi-people"></i> Community</a>
+      <a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a>
+      <div class="wl-drawer-label">Studio</div>
+      <a href="image-generator.html" data-nav-link><i class="bi bi-image"></i> Image Generator</a>
+      <a href="image-to-video.html" data-nav-link><i class="bi bi-film"></i> Image-to-Video</a>
+    </nav>
+    <div class="mt-auto pt-4 d-flex flex-column gap-2">
+      <button class="btn-wl btn-outline-wl w-100" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install App</button>
+      <a href="login.html" class="btn-wl btn-outline-wl w-100" data-auth-out><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+      <div data-auth-in hidden class="d-flex align-items-center justify-content-between gap-2 px-2 py-2" style="border:1px solid var(--line-strong); border-radius:var(--r-md);">
+        <div class="d-flex align-items-center gap-2">
+          <span class="avatar-ring" style="width:32px;height:32px;font-size:0.75rem;" data-auth-initials>?</span>
+          <span class="text-ink" style="font-size:0.85rem;font-weight:700;" data-auth-name>-</span>
+        </div>
+        <button class="btn-icon-wl" style="width:34px;height:34px;" data-signout aria-label="Sign out"><i class="bi bi-box-arrow-right"></i></button>
+      </div>
+      <a href="identify.html" class="btn-wl btn-primary-wl w-100"><i class="bi bi-camera"></i> Identify Wildlife</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE HERO ============ -->
+<header class="page-hero">
+  <div class="container-wl d-flex flex-wrap justify-content-between align-items-end gap-3">
+    <div>
+      <span class="kicker" data-aos="fade-up"><i class="bi bi-people"></i> Community</span>
+      <h1 class="mt-3" data-aos="fade-up" data-aos-delay="60">Recent sightings</h1>
+      <p class="lede mt-2" style="max-width:520px;" data-aos="fade-up" data-aos-delay="120">Captured by naturalists around the world, moments ago.</p>
+    </div>
+    <button class="btn-wl btn-primary-wl" id="btnShareSighting" data-aos="fade-up"><i class="bi bi-plus-lg"></i> Share a Sighting</button>
+  </div>
+</header>
+
+<section class="pb-5">
+  <div class="container-wl">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4" data-aos="fade-up">
+      <div class="d-flex gap-2 flex-wrap" id="filterPills" data-pill-group>
+        <button class="tag-pill active" data-value="all">All Sightings</button>
+        <button class="tag-pill" data-value="verified"><i class="bi bi-patch-check-fill me-1"></i>Verified Only</button>
+      </div>
+      <div class="sort-select-wrap">
+        <select id="sortSelect" aria-label="Sort sightings">
+          <option value="recent">Most Recent</option>
+          <option value="liked">Most Liked</option>
+          <option value="commented">Most Discussed</option>
+        </select>
+        <i class="bi bi-chevron-down"></i>
+      </div>
+    </div>
+
+    <div class="row g-4" id="sightingsGrid"></div>
+
+    <div class="text-center mt-5" id="loadMoreWrap">
+      <button class="btn-wl btn-outline-wl" id="btnLoadMore"><i class="bi bi-arrow-down-circle"></i> Load More Sightings</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SIGHTING DETAIL MODAL ============ -->
+<div class="modal fade" id="sightingModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body" id="sightingBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SHARE SIGHTING MODAL ============ -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-3" style="background:var(--bg-elevated); border:1px solid var(--line-strong); border-radius:var(--r-xl);">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-ink">Share a Sighting</h5>
+        <button type="button" class="btn-icon-wl" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form class="modal-body" id="shareForm">
+        <div class="field-group">
+          <label class="field-label">Photo</label>
+          <div class="dropzone" style="padding:30px 20px;">
+            <div class="dropzone-icon" style="width:54px;height:54px;font-size:1.3rem;"><i class="bi bi-camera"></i></div>
+            <p class="mb-0" style="font-size:0.85rem;">Click to upload a photo of your sighting</p>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="shareSpecies">Species (optional)</label>
+          <input class="wl-input" id="shareSpecies" placeholder="e.g. Red Fox — leave blank to ask the community">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="shareLocation">Location</label>
+          <input class="wl-input" id="shareLocation" placeholder="e.g. Yellowstone, USA">
+        </div>
+        <div class="field-group mb-0">
+          <label class="field-label" for="shareCaption">Caption</label>
+          <textarea class="wl-textarea" id="shareCaption" style="min-height:80px;" placeholder="What did you see?"></textarea>
+        </div>
+      </form>
+      <div class="modal-footer border-0">
+        <button class="btn-wl btn-outline-wl" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn-wl btn-primary-wl" id="btnPostSighting"><i class="bi bi-send"></i> Post Sighting</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="wl-footer">
+  <div class="container-wl">
+    <div class="row gy-5">
+      <div class="col-12 col-lg-4">
+        <a href="index.html" class="wl-brand mb-3 d-inline-flex"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+        <p class="mt-3">A field guide for the wild world — instant AI identification, a living encyclopedia, and a community tracking Earth's most extraordinary creatures.</p>
+        <div class="social-row">
+          <a href="#" class="btn-icon-wl" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="GitHub"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Navigate</h6>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="identify.html">Identify</a></li>
+          <li><a href="encyclopedia.html">Encyclopedia</a></li>
+          <li><a href="community.html">Community</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>AI Studio</h6>
+        <ul>
+          <li><a href="image-generator.html">Image Generator</a></li>
+          <li><a href="image-to-video.html">Image to Video</a></li>
+          <li><a href="image-generator.html#upscaler">Upscaler</a></li>
+          <li><a href="image-generator.html#bg-remover">Background Remover</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Resources</h6>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+          <li><a href="#">Conservation Partners</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Stay Updated</h6>
+        <p class="mb-2" style="font-size:0.86rem;">Species spotlights, monthly.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); WL.toast('Subscribed — welcome to the pack.');">
+          <input type="email" required placeholder="you@email.com" aria-label="Email address">
+          <button type="submit" class="btn-icon-wl" style="width:44px;height:44px;flex-shrink:0;" aria-label="Subscribe"><i class="bi bi-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+      <div class="footer-copy">© 2026 WildLens. Helping people connect with nature.</div>
+    </div>
+    <div class="dev-credit">
+      Crafted with <i class="bi bi-heart-fill" style="color:#57b37f;"></i> by <a href="https://peterlightspeed.github.io/portfolio" target="_blank" rel="noopener noreferrer">Peter Lightspeed</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var ART = {
+    fox: '<path d="M150 190 C190 180 200 130 175 100 C190 96 200 76 194 58 C176 66 168 82 166 92 C150 78 128 78 112 90 C96 78 74 66 56 58 C50 76 60 96 75 100 C50 130 60 180 100 190 C112 168 138 168 150 190Z" fill="#8fd9ae" opacity="0.92"/><polygon points="60,60 78,96 46,92" fill="#8fd9ae" opacity="0.92"/><polygon points="190,60 172,96 204,92" fill="#8fd9ae" opacity="0.92"/><circle cx="102" cy="118" r="4" fill="#0e2419"/><circle cx="138" cy="118" r="4" fill="#0e2419"/>',
+    deer: '<ellipse cx="120" cy="168" rx="62" ry="34" fill="#8fd9ae" opacity="0.9"/><path d="M148 130 C158 148 158 168 148 184 L124 190 C132 168 132 148 122 130 Z" fill="#8fd9ae" opacity="0.9"/><circle cx="146" cy="112" r="26" fill="#8fd9ae" opacity="0.9"/><path d="M160 92 C168 66 190 50 204 52 C194 62 188 78 186 92 C192 80 208 68 224 70 C212 82 202 96 198 112" fill="none" stroke="#57b37f" stroke-width="7" stroke-linecap="round"/><path d="M160 92 C152 62 130 44 114 44 C124 56 128 74 128 90 C120 76 102 66 84 70 C98 80 110 96 114 112" fill="none" stroke="#57b37f" stroke-width="7" stroke-linecap="round"/>',
+    elephant: '<ellipse cx="110" cy="150" rx="58" ry="42" fill="#d8d9cf" opacity="0.9"/><ellipse cx="176" cy="118" rx="42" ry="46" fill="#93a293" opacity="0.5"/><circle cx="168" cy="112" r="30" fill="#d8d9cf" opacity="0.9"/><path d="M172 128 C180 152 168 168 152 178 L138 172 C154 160 158 144 150 128Z" fill="#d8d9cf" opacity="0.9"/><rect x="70" y="184" width="14" height="42" rx="6" fill="#d8d9cf" opacity="0.9"/><rect x="100" y="188" width="14" height="40" rx="6" fill="#d8d9cf" opacity="0.9"/><rect x="140" y="184" width="14" height="42" rx="6" fill="#d8d9cf" opacity="0.9"/>',
+    leopard: '<ellipse cx="120" cy="168" rx="78" ry="34" fill="#d8d9cf" opacity="0.14"/><circle cx="120" cy="112" r="46" fill="#d8d9cf" opacity="0.9"/><circle cx="96" cy="78" r="13" fill="#d8d9cf" opacity="0.9"/><circle cx="144" cy="78" r="13" fill="#d8d9cf" opacity="0.9"/><circle cx="105" cy="112" r="4" fill="#0e2419"/><circle cx="135" cy="112" r="4" fill="#0e2419"/><g fill="none" stroke="#57b37f" stroke-width="3" opacity="0.7"><circle cx="70" cy="150" r="6"/><circle cx="90" cy="172" r="7"/><circle cx="150" cy="172" r="7"/><circle cx="170" cy="150" r="6"/></g>',
+    whale: '<path d="M30 130 C55 78 150 62 196 96 C210 118 196 152 148 166 C96 178 50 168 30 130Z" fill="#8fd9ae" opacity="0.92"/><polygon points="10,105 34,116 34,144 10,155 22,130" fill="#8fd9ae" opacity="0.92"/><circle cx="90" cy="98" r="3" fill="#0e2419"/>',
+    owl: '<ellipse cx="120" cy="150" rx="62" ry="70" fill="#8fd9ae" opacity="0.92"/><polygon points="80,70 95,110 65,108" fill="#8fd9ae" opacity="0.92"/><polygon points="160,70 145,110 175,108" fill="#8fd9ae" opacity="0.92"/><circle cx="98" cy="130" r="26" fill="#0e2419"/><circle cx="98" cy="130" r="14" fill="#f3f0e7"/><circle cx="142" cy="130" r="26" fill="#0e2419"/><circle cx="142" cy="130" r="14" fill="#f3f0e7"/><polygon points="120,145 112,160 128,160" fill="#d9a441"/>',
+    turtle: '<ellipse cx="120" cy="130" rx="72" ry="54" fill="#8fd9ae" opacity="0.92"/><g fill="none" stroke="#3a7a5a" stroke-width="3" opacity="0.8"><path d="M70 100 L120 84 L170 100"/><path d="M60 130 L120 110 L180 130"/></g><circle cx="120" cy="82" r="18" fill="#8fd9ae" opacity="0.92"/>'
+  };
+
+  var SIGHTINGS = [
+    { name:'Red Fox', key:'fox', tone:'tone-d', user:'WildTracker', verified:true, loc:'Yellowstone, USA', time:'2h ago', likes:284, comments:19, caption:'Spotted this fella trotting along the tree line just after sunrise — didn\u2019t even flinch when I raised the camera.' },
+    { name:'White-tailed Deer', key:'deer', tone:'tone-a', user:'NatureLens', verified:true, loc:'Ontario, Canada', time:'4h ago', likes:512, comments:33, caption:'A young buck, antlers still in velvet. Ontario\u2019s forests are full of them this time of year.' },
+    { name:'Forest Elephant', key:'elephant', tone:'tone-b', user:'AfricaWild', verified:true, loc:'Congo Basin', time:'6h ago', likes:891, comments:57, caption:'Forest elephants are shier and smaller than their savanna cousins — this was a rare, still moment.' },
+    { name:'Snow Leopard', key:'leopard', tone:'tone-c', user:'MountainTrail', verified:false, loc:'Ladakh, India', time:'9h ago', likes:1204, comments:88, caption:'Three days of waiting in −15°C for this. Worth every hour.' },
+    { name:'Humpback Whale', key:'whale', tone:'tone-d', user:'ReefRunner', verified:true, loc:'Kaikoura, New Zealand', time:'12h ago', likes:673, comments:41, caption:'Breached twice within a minute — the boat nearly rocked us into the sea.' },
+    { name:'Great Horned Owl', key:'owl', tone:'tone-a', user:'CanopyWatch', verified:false, loc:'Oregon, USA', time:'1d ago', likes:342, comments:22, caption:'Heard the call for three nights before I finally found the nest.' },
+    { name:'Green Sea Turtle', key:'turtle', tone:'tone-b', user:'TidepoolTom', verified:true, loc:'Great Barrier Reef, AU', time:'1d ago', likes:455, comments:26, caption:'She surfaced right next to the boat for air, completely unbothered by us.' },
+    { name:'Red Fox', key:'fox', tone:'tone-c', user:'ArcticEyes', verified:false, loc:'Lapland, Finland', time:'2d ago', likes:198, comments:12, caption:'Winter coat is coming in thick already — early sign of a cold season ahead.' },
+    { name:'Forest Elephant', key:'elephant', tone:'tone-d', user:'DesertDrift', verified:false, loc:'Gabon', time:'3d ago', likes:229, comments:15, caption:'A small herd crossing the river at dusk. Counted six, including two calves.' }
+  ];
+
+  var state = { filter: 'all', sort: 'recent', shown: 6 };
+  var COMMENTS = [
+    { user: 'PineTrail', text: 'Incredible shot — what lens did you use?' },
+    { user: 'Fernwood', text: 'Seen one in almost the same spot last spring!' },
+    { user: 'RiverBend', text: 'This made my morning. Thank you for sharing.' }
+  ];
+
+  function initials(name) { return name.slice(0, 2).toUpperCase(); }
+
+  function cardHTML(s, idx) {
+    return '<div class="col-12 col-md-6 col-lg-4">' +
+      '<div class="card-wl reticle h-100" data-open="' + idx + '" style="cursor:pointer;">' +
+        '<div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>' +
+        '<div class="card-media species-art ' + s.tone + '">' +
+          '<div class="badge-overlay badge-wl badge-neutral"><i class="bi bi-geo-alt-fill"></i> ' + s.loc + '</div>' +
+          '<div class="card-actions"><button class="icon-chip" data-fav-toggle aria-label="Save" onclick="event.stopPropagation()"><i class="bi bi-heart"></i></button></div>' +
+          '<svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">' + ART[s.key] + '</svg>' +
+          '<div class="carousel-dots"><span class="active"></span><span></span><span></span></div>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="d-flex justify-content-between align-items-start">' +
+            '<h3 style="font-size:1.05rem;">' + s.name + '</h3>' +
+            '<span class="spec-tag">' + s.time + '</span>' +
+          '</div>' +
+          '<p class="clamp-2 mb-3" style="font-size:0.86rem;">' + s.caption + '</p>' +
+          '<div class="d-flex justify-content-between align-items-center">' +
+            '<div class="d-flex align-items-center gap-2">' +
+              '<div class="avatar-ring" style="width:28px;height:28px;font-size:0.7rem;">' + initials(s.user) + '</div>' +
+              '<span class="spec-tag">@' + s.user + (s.verified ? ' <i class="bi bi-patch-check-fill" style="color:var(--accent-bright);"></i>' : '') + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="engage-row mt-3">' +
+            '<button class="engage-btn" data-like-toggle onclick="event.stopPropagation()"><i class="bi bi-heart"></i> <span data-like-count>' + s.likes + '</span></button>' +
+            '<button class="engage-btn" onclick="event.stopPropagation()"><i class="bi bi-chat"></i> ' + s.comments + '</button>' +
+            '<button class="engage-btn" onclick="event.stopPropagation(); WL.toast(\'Link copied\')"><i class="bi bi-share"></i></button>' +
+          '</div>' +
+        '</div>' +
+      '</div></div>';
+  }
+
+  function filteredList() {
+    var list = SIGHTINGS.slice();
+    if (state.filter === 'verified') list = list.filter(function (s) { return s.verified; });
+    if (state.sort === 'liked') list.sort(function (a, b) { return b.likes - a.likes; });
+    if (state.sort === 'commented') list.sort(function (a, b) { return b.comments - a.comments; });
+    return list;
+  }
+
+  function render() {
+    var list = filteredList();
+    var grid = document.getElementById('sightingsGrid');
+    var visible = list.slice(0, state.shown);
+    grid.innerHTML = visible.map(function (s) {
+      return cardHTML(s, SIGHTINGS.indexOf(s));
+    }).join('');
+    document.getElementById('loadMoreWrap').style.display = state.shown >= list.length ? 'none' : '';
+  }
+  render();
+
+  document.getElementById('filterPills').addEventListener('pillchange', function (e) {
+    state.filter = e.detail.value; state.shown = 6; render();
+  });
+  document.getElementById('sortSelect').addEventListener('change', function (e) {
+    state.sort = e.target.value; render();
+  });
+  document.getElementById('btnLoadMore').addEventListener('click', function () {
+    state.shown += 6; render();
+  });
+
+  /* ---- Detail modal ---- */
+  var sightingModalInstance = null;
+  function getSightingModal() {
+    if (!sightingModalInstance) sightingModalInstance = new bootstrap.Modal(document.getElementById('sightingModal'));
+    return sightingModalInstance;
+  }
+  document.getElementById('sightingsGrid').addEventListener('click', function (e) {
+    var card = e.target.closest('[data-open]');
+    if (!card) return;
+    var s = SIGHTINGS[parseInt(card.getAttribute('data-open'), 10)];
+    openSighting(s);
+  });
+
+  function openSighting(s) {
+    var html =
+      '<div class="detail-gallery species-art ' + s.tone + '">' +
+        '<button type="button" class="btn-icon-wl position-absolute" style="top:16px;right:16px;z-index:5;" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>' +
+        '<div class="badge-overlay badge-wl badge-neutral"><i class="bi bi-geo-alt-fill"></i> ' + s.loc + '</div>' +
+        '<svg class="specimen-svg" viewBox="0 0 240 240">' + ART[s.key] + '</svg>' +
+        '<div class="carousel-dots"><span class="active"></span><span></span><span></span></div>' +
+      '</div>' +
+      '<div class="p-4 p-md-5">' +
+        '<div class="d-flex justify-content-between align-items-start flex-wrap gap-3">' +
+          '<div class="d-flex align-items-center gap-3">' +
+            '<div class="avatar-ring">' + initials(s.user) + '</div>' +
+            '<div><div class="fw-bold text-ink">@' + s.user + (s.verified ? ' <i class="bi bi-patch-check-fill" style="color:var(--accent-bright);"></i>' : '') + '</div><div class="spec-tag">' + s.time + '</div></div>' +
+          '</div>' +
+          '<h2 style="font-size:1.5rem;margin:0;">' + s.name + '</h2>' +
+        '</div>' +
+        '<p class="mt-3" style="font-size:0.96rem;">' + s.caption + '</p>' +
+        '<div class="map-preview mt-3"><div class="pin"><i class="bi bi-geo-alt-fill"></i></div><div class="label">' + s.loc + '</div></div>' +
+        '<div class="engage-row mt-4">' +
+          '<button class="engage-btn" data-like-toggle><i class="bi bi-heart"></i> <span data-like-count>' + s.likes + '</span></button>' +
+          '<button class="engage-btn"><i class="bi bi-chat"></i> ' + s.comments + ' comments</button>' +
+          '<button class="engage-btn" onclick="WL.toast(\'Link copied\')"><i class="bi bi-share"></i> Share</button>' +
+          '<button class="engage-btn" data-fav-toggle><i class="bi bi-bookmark"></i></button>' +
+        '</div>' +
+        '<hr class="divider-wl my-4">' +
+        '<h6 class="spec-tag text-uppercase mb-2">Comments</h6>' +
+        COMMENTS.map(function (c) {
+          return '<div class="comment-row"><div class="comment-avatar">' + initials(c.user) + '</div><div><div class="fw-bold text-ink" style="font-size:0.86rem;">@' + c.user + '</div><p class="mb-0" style="font-size:0.86rem;">' + c.text + '</p></div></div>';
+        }).join('') +
+        '<div class="comment-input-row mt-3">' +
+          '<div class="comment-avatar">YOU</div>' +
+          '<input class="wl-input" placeholder="Add a comment…" style="border-radius:999px;">' +
+          '<button class="btn-icon-wl" onclick="WL.auth.requireAuth(function(){ WL.toast(\'Comment posted\'); })" aria-label="Post comment"><i class="bi bi-send"></i></button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('sightingBody').innerHTML = html;
+    getSightingModal().show();
+  }
+
+  /* ---- Share sighting ---- */
+  var shareModalInstance = null;
+  function getShareModal() {
+    if (!shareModalInstance) shareModalInstance = new bootstrap.Modal(document.getElementById('shareModal'));
+    return shareModalInstance;
+  }
+  document.getElementById('btnShareSighting').addEventListener('click', function () { WL.auth.requireAuth(function () { getShareModal().show(); }); });
+  document.getElementById('btnPostSighting').addEventListener('click', function () {
+    getShareModal().hide();
+    WL.toast('Sighting posted — thank you for contributing!');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WildLens — Discover the Wild World Around You</title>
+<meta name="description" content="Snap a photo, identify any species in seconds. AI-powered wildlife identification, a living encyclopedia, and a global community of nature trackers.">
+<link rel="canonical" href="https://YOUR-USERNAME.github.io/wildlens/">
+<meta name="robots" content="index, follow">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://YOUR-USERNAME.github.io/wildlens/"}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"WildLens","url":"https://YOUR-USERNAME.github.io/wildlens/","logo":"https://YOUR-USERNAME.github.io/wildlens/icons/icon-512.png","description":"AI-powered wildlife identification, a living species encyclopedia, and a community of naturalists."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"WildLens","url":"https://YOUR-USERNAME.github.io/wildlens/"}
+</script>
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WildLens">
+
+<!-- Social preview -->
+<meta property="og:title" content="WildLens — AI Wildlife Identifier">
+<meta property="og:description" content="Snap a photo, identify any species in seconds. AI-powered wildlife identification, a living encyclopedia, and a global community of naturalists.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<meta name="twitter:card" content="summary">
+
+<!-- Bootstrap 5.3 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- AOS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+<!-- WildLens design system -->
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ NAVBAR ============ -->
+<nav class="wl-nav" id="wlNav">
+  <div class="container-wl">
+    <a href="index.html" class="wl-brand">
+      <span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>
+      WildLens
+    </a>
+    <ul class="wl-links">
+      <li><a href="index.html" data-nav-link class="active">Home</a></li>
+      <li><a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a></li>
+      <li><a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a></li>
+      <li><a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-stars"></i> Studio</a>
+        <ul class="dropdown-menu wl-dropdown-menu">
+          <li><a class="dropdown-item" href="image-generator.html"><i class="bi bi-image"></i> Image Generator</a></li>
+          <li><a class="dropdown-item" href="image-to-video.html"><i class="bi bi-film"></i> Image to Video</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div class="wl-nav-actions">
+      <button class="btn-wl btn-outline-wl btn-sm-wl d-none d-md-inline-flex" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install</button>
+      <a href="identify.html" class="btn-wl btn-primary-wl btn-sm-wl d-none d-md-inline-flex"><i class="bi bi-camera"></i> Identify Now</a>
+      <a href="login.html" class="btn-wl btn-ghost-wl btn-sm-wl d-none d-md-inline-flex" data-auth-out><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+      <div class="dropdown d-none d-md-block" data-auth-in hidden>
+        <button class="btn-icon-wl" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu" style="font-family:var(--font-mono);font-weight:700;font-size:0.75rem;">
+          <span data-auth-initials>?</span>
+        </button>
+        <ul class="dropdown-menu wl-dropdown-menu dropdown-menu-end">
+          <li class="px-3 py-2"><div class="text-ink fw-bold" style="font-size:0.85rem;" data-auth-name>-</div></li>
+          <li><hr class="dropdown-divider" style="border-color:var(--line);"></li>
+          <li><button class="dropdown-item" data-signout type="button"><i class="bi bi-box-arrow-right"></i> Sign Out</button></li>
+        </ul>
+      </div>
+      <button class="wl-burger" data-drawer-open aria-label="Open menu" aria-expanded="false"><span class="bi bi-list"></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="wl-drawer">
+  <div class="wl-drawer-backdrop"></div>
+  <div class="wl-drawer-panel">
+    <div class="wl-drawer-head">
+      <a href="index.html" class="wl-brand"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+      <button class="wl-burger" data-drawer-close aria-label="Close menu"><span class="bi bi-x-lg"></span></button>
+    </div>
+    <nav>
+      <a href="index.html" data-nav-link class="active"><i class="bi bi-house"></i> Home</a>
+      <a href="identify.html" data-nav-link><i class="bi bi-camera"></i> Identify</a>
+      <a href="community.html" data-nav-link><i class="bi bi-people"></i> Community</a>
+      <a href="encyclopedia.html" data-nav-link><i class="bi bi-journal-bookmark"></i> Encyclopedia</a>
+      <div class="wl-drawer-label">Studio</div>
+      <a href="image-generator.html" data-nav-link><i class="bi bi-image"></i> Image Generator</a>
+      <a href="image-to-video.html" data-nav-link><i class="bi bi-film"></i> Image-to-Video</a>
+    </nav>
+    <div class="mt-auto pt-4 d-flex flex-column gap-2">
+      <button class="btn-wl btn-outline-wl w-100" data-install-app hidden aria-label="Install WildLens app"><i class="bi bi-download"></i> Install App</button>
+      <a href="login.html" class="btn-wl btn-outline-wl w-100" data-auth-out><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+      <div data-auth-in hidden class="d-flex align-items-center justify-content-between gap-2 px-2 py-2" style="border:1px solid var(--line-strong); border-radius:var(--r-md);">
+        <div class="d-flex align-items-center gap-2">
+          <span class="avatar-ring" style="width:32px;height:32px;font-size:0.75rem;" data-auth-initials>?</span>
+          <span class="text-ink" style="font-size:0.85rem;font-weight:700;" data-auth-name>-</span>
+        </div>
+        <button class="btn-icon-wl" style="width:34px;height:34px;" data-signout aria-label="Sign out"><i class="bi bi-box-arrow-right"></i></button>
+      </div>
+      <a href="identify.html" class="btn-wl btn-primary-wl w-100"><i class="bi bi-camera"></i> Identify Wildlife</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="container-wl">
+    <div class="hero-grid">
+      <div data-aos="fade-up">
+        <span class="kicker"><span class="dot"></span> AI-Powered Wildlife Discovery</span>
+        <h1 class="hero-title" style="margin-top:20px;">Discover the <em>wild world</em> around you</h1>
+        <p class="lede" style="max-width:480px;">Snap a photo, identify any species in seconds. Join a global community of naturalists tracking, sharing, and protecting Earth's most extraordinary creatures.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="identify.html" class="btn-wl btn-primary-wl"><i class="bi bi-camera-fill"></i> Identify Wildlife Now</a>
+          <a href="community.html" class="btn-wl btn-outline-wl"><i class="bi bi-eye"></i> Browse Sightings</a>
+        </div>
+        <div class="hero-stats-row">
+          <div class="hero-stat-inline"><span class="num" data-counter="12000" data-suffix="+">0</span><span class="lbl">Species&nbsp;Identified</span></div>
+          <div class="hero-stat-inline"><span class="num" data-counter="50" data-suffix="K+">0</span><span class="lbl">Sightings</span></div>
+          <div class="hero-stat-inline"><span class="num" data-counter="98" data-suffix="%">0</span><span class="lbl">AI&nbsp;Accuracy</span></div>
+        </div>
+      </div>
+
+      <div class="hero-media" data-aos="fade-up" data-aos-delay="120">
+        <div class="hero-media-frame reticle" id="heroFrame">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="scan-line" id="heroScan"></div>
+          <svg viewBox="0 0 500 620" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMax slice">
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0e2015"/>
+                <stop offset="55%" stop-color="#132a1c"/>
+                <stop offset="100%" stop-color="#0a130d"/>
+              </linearGradient>
+              <radialGradient id="glowGrad" cx="70%" cy="18%" r="45%">
+                <stop offset="0%" stop-color="#8fd9ae" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#8fd9ae" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="500" height="620" fill="url(#skyGrad)"/>
+            <rect width="500" height="620" fill="url(#glowGrad)"/>
+            <!-- distant tree line -->
+            <g fill="#0f2418" opacity="0.9">
+              <polygon points="0,420 30,340 60,420"/>
+              <polygon points="45,430 85,320 125,430"/>
+              <polygon points="110,425 150,350 190,425"/>
+              <polygon points="170,435 220,310 270,435"/>
+              <polygon points="250,425 290,345 330,425"/>
+              <polygon points="310,432 355,325 400,432"/>
+              <polygon points="375,422 415,340 455,422"/>
+              <polygon points="430,430 470,350 500,430"/>
+            </g>
+            <!-- mid tree line -->
+            <g fill="#0a1a12">
+              <polygon points="-10,470 40,360 90,470"/>
+              <polygon points="70,478 130,345 190,478"/>
+              <polygon points="160,472 215,365 270,472"/>
+              <polygon points="245,480 300,355 355,480"/>
+              <polygon points="330,472 385,362 440,472"/>
+              <polygon points="410,478 465,360 510,478"/>
+            </g>
+            <!-- fireflies -->
+            <g fill="#8fd9ae">
+              <circle cx="90" cy="200" r="2.4" opacity="0.8"><animate attributeName="opacity" values="0.2;0.9;0.2" dur="3.2s" repeatCount="indefinite"/></circle>
+              <circle cx="360" cy="160" r="2" opacity="0.6"><animate attributeName="opacity" values="0.8;0.1;0.8" dur="4s" repeatCount="indefinite"/></circle>
+              <circle cx="230" cy="120" r="1.8" opacity="0.7"><animate attributeName="opacity" values="0.3;1;0.3" dur="2.6s" repeatCount="indefinite"/></circle>
+              <circle cx="420" cy="260" r="2.2" opacity="0.5"><animate attributeName="opacity" values="0.6;0.15;0.6" dur="3.6s" repeatCount="indefinite"/></circle>
+              <circle cx="60" cy="300" r="1.6" opacity="0.6"><animate attributeName="opacity" values="0.9;0.2;0.9" dur="4.4s" repeatCount="indefinite"/></circle>
+            </g>
+            <!-- stag silhouette, foreground -->
+            <g transform="translate(90,300)" fill="#050e08">
+              <ellipse cx="150" cy="240" rx="118" ry="66" />
+              <path d="M235 150 C255 175 258 205 244 235 L204 245 C214 205 214 175 200 150 Z" />
+              <circle cx="230" cy="128" r="42" />
+              <path d="M255 96 C270 60 300 40 320 44 C305 55 296 74 292 92 C300 78 322 62 344 64 C328 78 314 96 308 116" fill="none" stroke="#050e08" stroke-width="9" stroke-linecap="round"/>
+              <path d="M255 96 C244 56 218 32 196 32 C208 46 214 66 214 86 C204 70 182 58 160 62 C176 74 190 94 194 116" fill="none" stroke="#050e08" stroke-width="9" stroke-linecap="round"/>
+              <path d="M40 230 C10 190 6 150 30 110 C60 78 110 66 150 76 C120 90 96 112 84 140 C112 128 150 128 182 146 C150 154 122 178 112 210 Z"/>
+              <rect x="70" y="290" width="16" height="70" rx="7"/>
+              <rect x="120" y="298" width="16" height="66" rx="7"/>
+              <rect x="180" y="296" width="16" height="68" rx="7"/>
+              <rect x="225" y="288" width="16" height="70" rx="7"/>
+            </g>
+            <!-- ground mist -->
+            <rect x="0" y="560" width="500" height="60" fill="url(#skyGrad)" opacity="0.001"/>
+          </svg>
+        </div>
+
+        <div class="hero-badge-float b1" style="top:8%; left:-6%;">
+          <span class="ic"><i class="bi bi-cpu"></i></span>
+          <div><div class="title">Species Matched</div><div class="sub">CONF. 97.4%</div></div>
+        </div>
+        <div class="hero-badge-float b2" style="bottom:10%; right:-6%;">
+          <span class="ic"><i class="bi bi-geo-alt"></i></span>
+          <div><div class="title">White-tailed Deer</div><div class="sub">ONTARIO, CA</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator"><span>Explore</span><span class="line"></span></div>
+  </div>
+</header>
+
+<!-- ============ STAT BAND ============ -->
+<section class="container-wl" style="padding-bottom: 0;">
+  <div class="stat-band" data-aos="fade-up">
+    <div class="stat-band-grid">
+      <div class="stat-item"><span class="num" data-counter="12000" data-suffix="+">0</span><span class="lbl">Species Identified</span></div>
+      <div class="stat-item"><span class="num" data-counter="50" data-suffix="K+">0</span><span class="lbl">Community Sightings</span></div>
+      <div class="stat-item"><span class="num" data-counter="98" data-suffix="%">0</span><span class="lbl">AI Accuracy</span></div>
+      <div class="stat-item"><span class="num" data-counter="120" data-suffix="+">0</span><span class="lbl">Countries Covered</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="section-pad">
+  <div class="container-wl">
+    <div class="section-head center" data-aos="fade-up">
+      <span class="kicker">What's Inside</span>
+      <h2>Everything you need to explore wildlife</h2>
+      <p>From instant AI identification to a living encyclopedia and a global naturalist community — WildLens brings the wild closer to you.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+        <div class="feat-card">
+          <div class="feat-icon"><i class="bi bi-camera"></i></div>
+          <h3>AI Identification</h3>
+          <p>Upload any wildlife photo and our AI instantly identifies the species with detailed facts, habitat, and diet.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="80">
+        <div class="feat-card">
+          <div class="feat-icon"><i class="bi bi-journal-bookmark"></i></div>
+          <h3>Living Encyclopedia</h3>
+          <p>Browse a curated field guide of species profiles — habitats, conservation status, and behaviour, always growing.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="160">
+        <div class="feat-card">
+          <div class="feat-icon"><i class="bi bi-people"></i></div>
+          <h3>Global Community</h3>
+          <p>Share sightings, follow trackers around the world, and help map biodiversity one photo at a time.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="240">
+        <div class="feat-card">
+          <div class="feat-icon"><i class="bi bi-stars"></i></div>
+          <h3>AI Studio</h3>
+          <p>Generate wildlife art, animate stills, remove backgrounds, and upscale your best shots — all in one studio.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SPECIES PREVIEW ============ -->
+<section class="section-pad" style="padding-top:0;">
+  <div class="container-wl">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3" style="margin-bottom:40px;" data-aos="fade-up">
+      <div class="section-head" style="margin-bottom:0;">
+        <span class="kicker">Field Guide</span>
+        <h2>From the encyclopedia</h2>
+        <p>A glimpse of the species catalog — apex predators to delicate pollinators.</p>
+      </div>
+      <a href="encyclopedia.html" class="btn-wl btn-outline-wl btn-sm-wl">Browse all species <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="row g-4">
+      <!-- African Lion -->
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up">
+        <a href="encyclopedia.html#lion" class="card-wl d-block text-decoration-none reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-a">
+            <span class="specimen-plate-num">PLATE 01</span>
+            <div class="specimen-latin">Panthera leo</div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <g fill="#3a7a5a" opacity="0.9">
+                <circle cx="172" cy="120" r="32"/><circle cx="156.8" cy="156.8" r="32"/><circle cx="120" cy="172" r="32"/>
+                <circle cx="83.2" cy="156.8" r="32"/><circle cx="68" cy="120" r="32"/><circle cx="83.2" cy="83.2" r="32"/>
+                <circle cx="120" cy="68" r="32"/><circle cx="156.8" cy="83.2" r="32"/>
+              </g>
+              <circle cx="120" cy="120" r="44" fill="#8fd9ae"/>
+              <circle cx="98" cy="90" r="11" fill="#3a7a5a"/><circle cx="142" cy="90" r="11" fill="#3a7a5a"/>
+              <circle cx="106" cy="122" r="4.5" fill="#0e2419"/><circle cx="134" cy="122" r="4.5" fill="#0e2419"/>
+              <path d="M112 138 Q120 146 128 138 Q124 148 120 148 Q116 148 112 138Z" fill="#0e2419"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+              <div><h3>African Lion</h3><p class="sci-name">Panthera leo</p></div>
+            </div>
+            <span class="badge-wl badge-warning mt-2"><i class="bi bi-exclamation-triangle"></i> Vulnerable</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Snow Leopard -->
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="80">
+        <a href="encyclopedia.html#snow-leopard" class="card-wl d-block text-decoration-none reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-b">
+            <span class="specimen-plate-num">PLATE 02</span>
+            <div class="specimen-latin">Panthera uncia</div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <ellipse cx="120" cy="168" rx="78" ry="34" fill="#d8d9cf" opacity="0.14"/>
+              <circle cx="120" cy="112" r="46" fill="#d8d9cf" opacity="0.9"/>
+              <circle cx="96" cy="78" r="13" fill="#d8d9cf" opacity="0.9"/><circle cx="144" cy="78" r="13" fill="#d8d9cf" opacity="0.9"/>
+              <circle cx="105" cy="112" r="4" fill="#0e2419"/><circle cx="135" cy="112" r="4" fill="#0e2419"/>
+              <path d="M112 128 Q120 135 128 128 Q124 137 120 137 Q116 137 112 128Z" fill="#0e2419"/>
+              <g fill="none" stroke="#57b37f" stroke-width="3" opacity="0.7">
+                <circle cx="70" cy="150" r="6"/><circle cx="90" cy="172" r="7"/><circle cx="120" cy="180" r="6"/>
+                <circle cx="150" cy="172" r="7"/><circle cx="170" cy="150" r="6"/><circle cx="70" cy="105" r="5"/><circle cx="170" cy="105" r="5"/>
+              </g>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div><h3>Snow Leopard</h3><p class="sci-name">Panthera uncia</p></div>
+            <span class="badge-wl badge-warning mt-2"><i class="bi bi-exclamation-triangle"></i> Vulnerable</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Blue Morpho Butterfly -->
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="160">
+        <a href="encyclopedia.html#blue-morpho" class="card-wl d-block text-decoration-none reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-c">
+            <span class="specimen-plate-num">PLATE 03</span>
+            <div class="specimen-latin">Morpho peleides</div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <g fill="#8fd9ae">
+                <path d="M118 120 C70 60 30 70 26 110 C22 150 70 158 118 128Z" opacity="0.92"/>
+                <path d="M122 120 C170 60 210 70 214 110 C218 150 170 158 122 128Z" opacity="0.92"/>
+                <path d="M116 132 C86 150 60 180 66 206 C90 202 112 172 120 140Z" opacity="0.75"/>
+                <path d="M124 132 C154 150 180 180 174 206 C150 202 128 172 120 140Z" opacity="0.75"/>
+              </g>
+              <rect x="116" y="108" width="8" height="96" rx="4" fill="#0e2419"/>
+              <path d="M118 110 Q104 92 92 88" stroke="#0e2419" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M122 110 Q136 92 148 88" stroke="#0e2419" stroke-width="3" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div><h3>Blue Morpho Butterfly</h3><p class="sci-name">Morpho peleides</p></div>
+            <span class="badge-wl badge-success mt-2"><i class="bi bi-check-circle"></i> Least Concern</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Red Fox -->
+      <div class="col-12 col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="240">
+        <a href="encyclopedia.html#red-fox" class="card-wl d-block text-decoration-none reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-d">
+            <span class="specimen-plate-num">PLATE 04</span>
+            <div class="specimen-latin">Vulpes vulpes</div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <path d="M150 190 C190 180 200 130 175 100 C190 96 200 76 194 58 C176 66 168 82 166 92 C150 78 128 78 112 90 C96 78 74 66 56 58 C50 76 60 96 75 100 C50 130 60 180 100 190 C112 168 138 168 150 190Z" fill="#8fd9ae" opacity="0.92"/>
+              <polygon points="60,60 78,96 46,92" fill="#8fd9ae" opacity="0.92"/>
+              <polygon points="190,60 172,96 204,92" fill="#8fd9ae" opacity="0.92"/>
+              <circle cx="102" cy="118" r="4" fill="#0e2419"/><circle cx="138" cy="118" r="4" fill="#0e2419"/>
+              <path d="M112 132 L128 132 L120 142Z" fill="#0e2419"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div><h3>Red Fox</h3><p class="sci-name">Vulpes vulpes</p></div>
+            <span class="badge-wl badge-success mt-2"><i class="bi bi-check-circle"></i> Least Concern</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RECENT SIGHTINGS ============ -->
+<section class="section-pad" style="padding-top:0;">
+  <div class="container-wl">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3" style="margin-bottom:40px;" data-aos="fade-up">
+      <div class="section-head" style="margin-bottom:0;">
+        <span class="kicker">Live From the Field</span>
+        <h2>Recent sightings</h2>
+        <p>Captured by our community around the world, moments ago.</p>
+      </div>
+      <a href="community.html" class="btn-wl btn-outline-wl btn-sm-wl">See all sightings <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up">
+        <div class="card-wl reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-d">
+            <div class="badge-overlay badge-wl badge-neutral"><i class="bi bi-geo-alt-fill"></i> Yellowstone, USA</div>
+            <div class="card-actions"><button class="icon-chip" data-fav-toggle aria-label="Save sighting"><i class="bi bi-heart"></i></button></div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <path d="M150 190 C190 180 200 130 175 100 C190 96 200 76 194 58 C176 66 168 82 166 92 C150 78 128 78 112 90 C96 78 74 66 56 58 C50 76 60 96 75 100 C50 130 60 180 100 190 C112 168 138 168 150 190Z" fill="#8fd9ae" opacity="0.92"/>
+              <polygon points="60,60 78,96 46,92" fill="#8fd9ae" opacity="0.92"/>
+              <polygon points="190,60 172,96 204,92" fill="#8fd9ae" opacity="0.92"/>
+              <circle cx="102" cy="118" r="4" fill="#0e2419"/><circle cx="138" cy="118" r="4" fill="#0e2419"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Red Fox</h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="spec-tag">by @WildTracker</span>
+              <a href="community.html" class="btn-wl btn-ghost-wl btn-sm-wl">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="80">
+        <div class="card-wl reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-a">
+            <div class="badge-overlay badge-wl badge-neutral"><i class="bi bi-geo-alt-fill"></i> Ontario, Canada</div>
+            <div class="card-actions"><button class="icon-chip" data-fav-toggle aria-label="Save sighting"><i class="bi bi-heart"></i></button></div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <ellipse cx="120" cy="168" rx="62" ry="34" fill="#8fd9ae" opacity="0.9"/>
+              <path d="M148 130 C158 148 158 168 148 184 L124 190 C132 168 132 148 122 130 Z" fill="#8fd9ae" opacity="0.9"/>
+              <circle cx="146" cy="112" r="26" fill="#8fd9ae" opacity="0.9"/>
+              <path d="M160 92 C168 66 190 50 204 52 C194 62 188 78 186 92 C192 80 208 68 224 70 C212 82 202 96 198 112" fill="none" stroke="#57b37f" stroke-width="7" stroke-linecap="round"/>
+              <path d="M160 92 C152 62 130 44 114 44 C124 56 128 74 128 90 C120 76 102 66 84 70 C98 80 110 96 114 112" fill="none" stroke="#57b37f" stroke-width="7" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>White-tailed Deer</h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="spec-tag">by @NatureLens</span>
+              <a href="community.html" class="btn-wl btn-ghost-wl btn-sm-wl">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="160">
+        <div class="card-wl reticle">
+          <div class="rt-corner tl"></div><div class="rt-corner tr"></div><div class="rt-corner bl"></div><div class="rt-corner br"></div>
+          <div class="card-media species-art tone-b">
+            <div class="badge-overlay badge-wl badge-neutral"><i class="bi bi-geo-alt-fill"></i> Congo Basin</div>
+            <div class="card-actions"><button class="icon-chip" data-fav-toggle aria-label="Save sighting"><i class="bi bi-heart"></i></button></div>
+            <svg class="specimen-svg" viewBox="0 0 240 240" aria-hidden="true">
+              <ellipse cx="110" cy="150" rx="58" ry="42" fill="#d8d9cf" opacity="0.9"/>
+              <ellipse cx="176" cy="118" rx="42" ry="46" fill="#93a293" opacity="0.5"/>
+              <circle cx="168" cy="112" r="30" fill="#d8d9cf" opacity="0.9"/>
+              <path d="M172 128 C180 152 168 168 152 178 L138 172 C154 160 158 144 150 128Z" fill="#d8d9cf" opacity="0.9"/>
+              <rect x="70" y="184" width="14" height="42" rx="6" fill="#d8d9cf" opacity="0.9"/>
+              <rect x="100" y="188" width="14" height="40" rx="6" fill="#d8d9cf" opacity="0.9"/>
+              <rect x="140" y="184" width="14" height="42" rx="6" fill="#d8d9cf" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <h3>Forest Elephant</h3>
+            <div class="d-flex justify-content-between align-items-center mt-2">
+              <span class="spec-tag">by @AfricaWild</span>
+              <a href="community.html" class="btn-wl btn-ghost-wl btn-sm-wl">View</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="section-pad" style="padding-top:0;">
+  <div class="container-wl">
+    <div class="text-center" data-aos="zoom-in" style="max-width:640px; margin:0 auto;">
+      <span class="kicker"><i class="bi bi-unlock"></i> Free to use · No signup required to explore</span>
+      <h2 style="font-size:clamp(2rem,4.4vw,2.9rem); margin:20px 0 14px;">Start identifying wildlife today</h2>
+      <p class="lede">Take a photo of any animal, bird, or insect. Our AI will identify it instantly and tell you everything about it.</p>
+      <a href="identify.html" class="btn-wl btn-primary-wl mt-3"><i class="bi bi-camera-fill"></i> Try the AI Identifier</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="wl-footer">
+  <div class="container-wl">
+    <div class="row gy-5">
+      <div class="col-12 col-lg-4">
+        <a href="index.html" class="wl-brand mb-3 d-inline-flex"><span class="wl-brand-mark"><i class="bi bi-leaf-fill"></i></span>WildLens</a>
+        <p class="mt-3">A field guide for the wild world — instant AI identification, a living encyclopedia, and a community tracking Earth's most extraordinary creatures.</p>
+        <div class="social-row">
+          <a href="#" class="btn-icon-wl" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="btn-icon-wl" aria-label="GitHub"><i class="bi bi-github"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Navigate</h6>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="identify.html">Identify</a></li>
+          <li><a href="encyclopedia.html">Encyclopedia</a></li>
+          <li><a href="community.html">Community</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>AI Studio</h6>
+        <ul>
+          <li><a href="image-generator.html">Image Generator</a></li>
+          <li><a href="image-to-video.html">Image to Video</a></li>
+          <li><a href="image-generator.html#upscaler">Upscaler</a></li>
+          <li><a href="image-generator.html#bg-remover">Background Remover</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Resources</h6>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">API Docs</a></li>
+          <li><a href="#">Conservation Partners</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2 footer-col">
+        <h6>Stay Updated</h6>
+        <p class="mb-2" style="font-size:0.86rem;">Species spotlights, monthly.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); WL.toast('Subscribed — welcome to the pack.');">
+          <input type="email" required placeholder="you@email.com" aria-label="Email address">
+          <button type="submit" class="btn-icon-wl" style="width:44px;height:44px;flex-shrink:0;" aria-label="Subscribe"><i class="bi bi-arrow-right"></i></button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+      <div class="footer-copy">© 2026 WildLens. Helping people connect with nature.</div>
+    </div>
+    <div class="dev-credit">
+      Crafted with <i class="bi bi-heart-fill" style="color:#57b37f;"></i> by <a href="https://peterlightspeed.github.io/portfolio" target="_blank" rel="noopener noreferrer">Peter Lightspeed</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Occasionally sweep the hero reticle scan-line to draw attention to the AI framing
+  document.addEventListener('DOMContentLoaded', function () {
+    var scan = document.getElementById('heroScan');
+    var frame = document.getElementById('heroFrame');
+    if (!scan || !frame) return;
+    function sweep() {
+      scan.classList.add('is-scanning');
+      setTimeout(function () { scan.classList.remove('is-scanning'); }, 1900);
+    }
+    setTimeout(sweep, 1200);
+    setInterval(sweep, 7000);
+  });
+</script>
+</body>
+</html>

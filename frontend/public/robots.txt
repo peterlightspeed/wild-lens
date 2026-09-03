@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /offline.html
+
+Sitemap: https://YOUR-USERNAME.github.io/wildlens/sitemap.xml
