@@ -4,4 +4,4 @@ Disallow: /login
 Disallow: /signup
 Disallow: /offline.html
 
-Sitemap: https://YOUR-USERNAME.github.io/wildlens/sitemap.xml
+Sitemap: https://peterlightspeed.github.io/wild-lens/sitemap.xml

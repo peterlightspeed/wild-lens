@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 // Set this to your real deployed origin before going live (also update
 // sitemap.xml / robots.txt / the JSON-LD below). Kept as one constant so
 // there's a single place to change it.
-export const SITE_ORIGIN = 'https://YOUR-USERNAME.github.io/wildlens';
+export const SITE_ORIGIN = 'https://peterlightspeed.github.io/wild-lens';
 
 /**
  * Per-route SEO tags. Pass `noindex` for auth pages (mirrors the static

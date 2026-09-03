@@ -195,9 +195,11 @@ deploys this:
 
 ## Before going live
 
-1. Fill in real values for `SITE_ORIGIN` in `frontend/src/components/Seo.jsx`
-   and the `YOUR-USERNAME` placeholders in `frontend/public/sitemap.xml` /
-   `robots.txt`.
+1. Site origin is set to `https://peterlightspeed.github.io/wild-lens` in
+   `frontend/src/components/Seo.jsx`, `frontend/public/sitemap.xml`,
+   `robots.txt`, `CORS_ORIGINS`, and `BASE_PATH` in the deploy workflow —
+   already done. If the repo or domain ever changes, all five need updating
+   together.
 2. Set at least one of `GROQ_API_KEY` / `GEMINI_API_KEY` /
    `OPENROUTER_API_KEY` in `backend/.env` so chat/identify give real answers
    instead of the mock.

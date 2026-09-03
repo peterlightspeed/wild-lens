@@ -5,25 +5,20 @@ Fixed already, don't need to touch:
       both `frontend/` and `legacy-static/`
 - [x] `.env.example` comments clarified (SECRET_KEY generation command,
       what CORS_ORIGINS/DATABASE_URL actually need, which vars are dead)
+- [x] Real domain wired in everywhere (repo is `wild-lens`, hyphenated —
+      GitHub Pages URL is `peterlightspeed.github.io/wild-lens`):
+      `Seo.jsx` SITE_ORIGIN, `sitemap.xml`, `robots.txt`, `CORS_ORIGINS`,
+      and `BASE_PATH` in the deploy workflow
 
 ---
 
 ## 🔴 Blocking — site won't work correctly without these
 
-- [ ] **Pick my real domain** and replace every `YOUR-USERNAME` placeholder
-      with it, in:
-  - [ ] `frontend/src/components/Seo.jsx` — `SITE_ORIGIN` (line 6)
-  - [ ] `frontend/public/sitemap.xml` — all 7 URLs
-  - [ ] `frontend/public/robots.txt` — the `Sitemap:` line
-  - [ ] `backend/.env` — `CORS_ORIGINS`
-  (If it's really `https://<myusername>.github.io/wildlens`, just confirm the
-  repo is actually named `wildlens` — see the BASE_PATH item below.)
-
-- [ ] **Confirm my GitHub repo name.** `.github/workflows/deploy.yml` has
-      `BASE_PATH: /wildlens/` hardcoded. If I rename the repo (or it's not
-      called `wildlens`), change this to `/<real-repo-name>/`.
-
-- [ ] **Set `VITE_API_BASE` as a GitHub Actions variable** (not just in
+- [ ] **Confirm the repo name really is `wild-lens`** (hyphenated) on
+      GitHub — that's what `BASE_PATH: /wild-lens/` in
+      `.github/workflows/deploy.yml` now assumes, matching the URL bar in
+      your screenshot. If you ever rename the repo, this breaks (assets
+      404) until `BASE_PATH` is updated to match. (not just in
       `.env` — the deploy workflow reads it from
       `Settings → Secrets and variables → Actions → Variables`, and it
       won't exist until I add it there manually). Point it at wherever I
