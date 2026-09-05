@@ -1,3 +1,4 @@
+from typing import Optional
 import uuid
 from datetime import datetime
 
@@ -15,7 +16,7 @@ class Sighting(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     species_name: Mapped[str] = mapped_column(String(120), nullable=False)
     location: Mapped[str] = mapped_column(String(200), nullable=False)
-    caption: Mapped[str | None] = mapped_column(Text, nullable=True)
+    caption: Mapped[str] = mapped_column(Text, nullable=True)
     image_url: Mapped[str] = mapped_column(String(500), nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

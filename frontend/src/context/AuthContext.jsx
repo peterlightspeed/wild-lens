@@ -108,7 +108,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     user, loggedIn, login, signup, logout, refreshUser,
-    requireAuth, gateOpen: !!gateCallback, closeGate,
+    requireAuth, gateOpen, closeGate,
     initials: () => initials(user && user.full_name),
   };
 

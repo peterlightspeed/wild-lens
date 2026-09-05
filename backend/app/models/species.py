@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,4 +23,4 @@ class Species(Base):
     diet_text: Mapped[str] = mapped_column(Text, nullable=False)
     conservation_text: Mapped[str] = mapped_column(Text, nullable=False)
     facts: Mapped[str] = mapped_column(Text, nullable=False)
-    image_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    image_url: Mapped[str] = mapped_column(String(500), nullable=True)
