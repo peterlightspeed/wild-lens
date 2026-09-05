@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Seo from '../components/Seo';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const { show } = useToast();
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -15,6 +16,22 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
 
   const nextUrl = params.get('next') || '/';
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setBusy(true);
+      setError('');
+      try {
+        await loginWithGoogle(tokenResponse.access_token);
+        show('Welcome back!');
+        setTimeout(() => navigate(nextUrl), 400);
+      } catch (err) {
+        setError(err.message || 'Could not sign in with Google');
+        setBusy(false);
+      }
+    },
+    onError: () => setError('Google Sign-In failed'),
+  });
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -43,8 +60,7 @@ export default function Login() {
           <h1 className="mt-3 mb-2" style={{ fontSize: '1.7rem' }}>Sign in to WildLens</h1>
           <p className="mb-4" style={{ fontSize: '0.92rem' }}>Access your saved species, sightings, and AI Studio credits.</p>
 
-          <button type="button" className="social-btn" onClick={() => show('Google sign-in coming soon')}><i className="bi bi-google"></i> Continue with Google</button>
-          <button type="button" className="social-btn" onClick={() => show('Apple sign-in coming soon')}><i className="bi bi-apple"></i> Continue with Apple</button>
+          <button type="button" className="social-btn" onClick={() => googleLogin()}><i className="bi bi-google"></i> Continue with Google</button>
 
           <div className="auth-divider">or</div>
 

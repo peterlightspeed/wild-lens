@@ -53,10 +53,7 @@ export default function Signup() {
           <h1 className="mt-3 mb-2" style={{ fontSize: '1.7rem' }}>Create your account</h1>
           <p className="mb-4" style={{ fontSize: '0.92rem' }}>Free forever. Save identifications, post sightings, and get 50 AI Studio credits a month.</p>
 
-          <button type="button" className="social-btn" onClick={() => show('Google sign-in coming soon')}><i className="bi bi-google"></i> Continue with Google</button>
-          <button type="button" className="social-btn" onClick={() => show('Apple sign-in coming soon')}><i className="bi bi-apple"></i> Continue with Apple</button>
 
-          <div className="auth-divider">or</div>
 
           <form onSubmit={onSubmit} noValidate>
             <div className="field-group">

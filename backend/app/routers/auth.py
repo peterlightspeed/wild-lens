@@ -10,8 +10,11 @@ from app.core.security import (
 from app.db.session import get_db
 from app.dependencies import get_current_user
 from app.models.user import User
-from app.schemas.auth import LoginRequest, SignupRequest, TokenResponse
+from app.schemas.auth import LoginRequest, SignupRequest, TokenResponse, GoogleLoginRequest
 from app.schemas.user import UserOut
+import os
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -46,6 +49,46 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     if not user.is_active:
         raise HTTPException(status_code=403, detail="This account has been disabled")
     return _issue_tokens(user)
+
+
+@router.post("/google", response_model=TokenResponse)
+def google_login(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
+    import requests
+    try:
+        res = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {payload.credential}"}
+        )
+        if not res.ok:
+            raise ValueError("Invalid token")
+            
+        idinfo = res.json()
+        email = idinfo.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Google token did not contain an email")
+            
+        name = idinfo.get("name", "Google User")
+        avatar = idinfo.get("picture", "")
+        
+        user = db.query(User).filter(User.email == email.lower()).first()
+        if not user:
+            user = User(
+                email=email.lower(),
+                full_name=name,
+                avatar_url=avatar,
+                hashed_password=hash_password(uuid_lib.uuid4().hex),
+                is_verified=True
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            
+        if not user.is_active:
+            raise HTTPException(status_code=403, detail="This account has been disabled")
+            
+        return _issue_tokens(user)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid Google token")
 
 
 @router.post("/refresh", response_model=TokenResponse)

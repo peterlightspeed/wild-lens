@@ -62,6 +62,20 @@ export function AuthProvider({ children }) {
     return data;
   }, [refreshUser]);
 
+  const loginWithGoogle = useCallback(async (credential) => {
+    const res = await fetch(`${apiBase()}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.detail || 'Could not sign in with Google');
+    setToken(data.access_token);
+    setLoggedIn(true);
+    await refreshUser();
+    return data;
+  }, [refreshUser]);
+
   const signup = useCallback(async (fullName, email, password) => {
     const res = await fetch(`${apiBase()}/auth/signup`, {
       method: 'POST',
@@ -107,7 +121,7 @@ export function AuthProvider({ children }) {
   };
 
   const value = {
-    user, loggedIn, login, signup, logout, refreshUser,
+    user, loggedIn, login, loginWithGoogle, signup, logout, refreshUser,
     requireAuth, gateOpen, closeGate,
     initials: () => initials(user && user.full_name),
   };
